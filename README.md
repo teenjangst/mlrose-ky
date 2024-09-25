@@ -53,10 +53,10 @@
 | src/mlrose\_ky/generators/six\_peaks\_generator.py            |       12 |        0 |    100% |           |
 | src/mlrose\_ky/generators/tsp\_generator.py                   |       45 |        7 |     84% |64-69, 106 |
 | src/mlrose\_ky/gridsearch/\_\_init\_\_.py                     |        1 |        0 |    100% |           |
-| src/mlrose\_ky/gridsearch/grid\_search\_mixin.py              |       33 |        2 |     94% |   129-130 |
+| src/mlrose\_ky/gridsearch/grid\_search\_mixin.py              |       33 |        4 |     88% |129-130, 138-139 |
 | src/mlrose\_ky/neural/\_\_init\_\_.py                         |        7 |        0 |    100% |           |
 | src/mlrose\_ky/neural/\_nn\_base.py                           |       60 |        0 |    100% |           |
-| src/mlrose\_ky/neural/\_nn\_core.py                           |      122 |        0 |    100% |           |
+| src/mlrose\_ky/neural/\_nn\_core.py                           |      121 |        0 |    100% |           |
 | src/mlrose\_ky/neural/activation/\_\_init\_\_.py              |        6 |        0 |    100% |           |
 | src/mlrose\_ky/neural/activation/identity.py                  |        7 |        0 |    100% |           |
 | src/mlrose\_ky/neural/activation/leaky\_relu.py               |       12 |        0 |    100% |           |
@@ -93,7 +93,7 @@
 | src/mlrose\_ky/runners/utils.py                               |       14 |        2 |     86% |     37-38 |
 | src/mlrose\_ky/samples/\_\_init\_\_.py                        |        1 |        0 |    100% |           |
 | src/mlrose\_ky/samples/synthetic\_data.py                     |      123 |        0 |    100% |           |
-|                                                     **TOTAL** | **2886** |  **279** | **90%** |           |
+|                                                     **TOTAL** | **2885** |  **281** | **90%** |           |
 
 
 ## Setup coverage badge

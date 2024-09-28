@@ -176,7 +176,7 @@ We can try to improve on our solution by tuning the parameters of our algorithm.
 
 ```python
 # Solve problem using simulated annealing
-best_state, best_fitness = mlrose_ky.simulated_annealing(problem, schedule = schedule,
+best_state, best_fitness, _ = mlrose_ky.simulated_annealing(problem, schedule = schedule,
                                                       max_attempts = 100, max_iters = 1000,
                                                       init_state = init_state, random_state = 1)
 

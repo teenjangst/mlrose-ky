@@ -9,3 +9,4 @@ from .flip_flop_generator import FlipFlopGenerator
 from .queens_generator import QueensGenerator
 from .tsp_generator import TSPGenerator
 from .continuous_peaks_generator import ContinuousPeaksGenerator
+from .four_peaks_generator import FourPeaksGenerator

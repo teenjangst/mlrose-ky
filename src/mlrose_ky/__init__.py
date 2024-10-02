@@ -55,7 +55,7 @@ from .opt_probs import DiscreteOpt, ContinuousOpt, KnapsackOpt, TSPOpt, QueensOp
 from .runners import GARunner, MIMICRunner, RHCRunner, SARunner, NNGSRunner, SKMLPRunner, build_data_filename
 
 # noinspection PyUnresolvedReferences
-from .generators import MaxKColorGenerator, QueensGenerator, FlipFlopGenerator, TSPGenerator, KnapsackGenerator, ContinuousPeaksGenerator
+from .generators import MaxKColorGenerator, QueensGenerator, FlipFlopGenerator, TSPGenerator, KnapsackGenerator, ContinuousPeaksGenerator, FourPeaksGenerator
 
 # noinspection PyUnresolvedReferences
 from .samples import SyntheticData, plot_synthetic_dataset

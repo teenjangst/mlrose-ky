@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mlrose-ky"
-version = "1.1.4"
+version = "1.1.5"
 description = "MLROSe-ky: Machine Learning, Randomized Optimization and Search"
 readme = "README.md"
 requires-python = ">=3.10"

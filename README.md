@@ -4,7 +4,7 @@
 
 | Name                                                          |    Stmts |     Miss |   Cover |   Missing |
 |-------------------------------------------------------------- | -------: | -------: | ------: | --------: |
-| src/mlrose\_ky/\_\_init\_\_.py                                |       19 |        0 |    100% |           |
+| src/mlrose\_ky/\_\_init\_\_.py                                |        8 |        0 |    100% |           |
 | src/mlrose\_ky/algorithms/\_\_init\_\_.py                     |        9 |        0 |    100% |           |
 | src/mlrose\_ky/algorithms/crossovers/\_\_init\_\_.py          |        3 |        0 |    100% |           |
 | src/mlrose\_ky/algorithms/crossovers/\_crossover\_base.py     |       11 |        0 |    100% |           |
@@ -93,7 +93,7 @@
 | src/mlrose\_ky/runners/utils.py                               |       14 |        2 |     86% |     37-38 |
 | src/mlrose\_ky/samples/\_\_init\_\_.py                        |        1 |        0 |    100% |           |
 | src/mlrose\_ky/samples/synthetic\_data.py                     |      123 |        0 |    100% |           |
-|                                                     **TOTAL** | **2886** |  **281** | **90%** |           |
+|                                                     **TOTAL** | **2875** |  **281** | **90%** |           |
 
 
 ## Setup coverage badge

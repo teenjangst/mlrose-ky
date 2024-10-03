@@ -74,7 +74,7 @@ class TestHillClimb:
         """Test that hill_climb raises ValueError when max_iters is invalid."""
         problem = DiscreteOpt(5, OneMax())
         max_iters = -1
-        with pytest.raises(ValueError, match=f"max_iters must be a positive integer. Got {max_iters}"):
+        with pytest.raises(ValueError, match=f"max_iters must be a positive integer or np.inf. Got {max_iters}"):
             hill_climb(problem, max_iters=max_iters, random_state=SEED)
 
     def test_hill_climb_invalid_init_state_length(self):

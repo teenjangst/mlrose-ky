@@ -20,70 +20,113 @@ def gradient_descent(
     curve: bool = False,
     random_state: int = None,
     state_fitness_callback: Callable = None,
-    callback_user_info: Any = None,
+    callback_user_info: dict = None,
 ) -> tuple[np.ndarray, float, np.ndarray | None]:
-    """Use gradient_descent to find the optimal neural network weights.
+    """
+    Use gradient descent to find the optimal weights for a neural network.
 
     Parameters
     ----------
     problem: optimization object
-        Object containing optimization problem to be solved.
+        Object containing the optimization problem to be solved.
+        Must be an instance of a neural network weight optimization problem.
+
     max_attempts: int, default: 10
         Maximum number of attempts to find a better state at each step.
-    max_iters: int, default: np.inf
+        Must be a positive integer greater than 0.
+
+    max_iters: int or float, default: np.inf
         Maximum number of iterations of the algorithm.
+        Must be a positive integer greater than 0 or `np.inf`.
+
     init_state: np.ndarray, default: None
-        Numpy array containing starting state for algorithm.
-        If None, then a random state is used.
-    random_state: int, default: None
-        If random_state is a positive integer, random_state is the seed used
-        by np.random.seed(); otherwise, the random seed is not set.
+        Numpy array containing the starting state for the algorithm.
+        If `None`, then a random state is used.
+
     curve: bool, default: False
-        Boolean to keep fitness values for a curve.
-        If :code:`False`, then no curve is stored.
-        If :code:`True`, then a history of fitness values is provided as a
-        third return value.
-    state_fitness_callback: function taking five parameters, default: None
-        If specified, this callback will be invoked once per iteration.
-        Parameters are (iteration, max attempts reached?, current best state, current best fit, user callback data).
-        Return true to continue iterating, or false to stop.
-    callback_user_info: any, default: None
-        User data passed as last parameter of callback.
+        Whether to keep fitness values for a curve.
+        If `False`, then no curve is stored.
+        If `True`, then a history of fitness values is provided as a third return value.
+
+    random_state: int, default: None
+        Seed for the random number generator.
+
+    state_fitness_callback: callable, default: None
+        If specified, this callback function is invoked once per iteration with the following parameters:
+
+        - iteration: int
+          The current iteration number (starting from 0). `iteration=0` indicates the initial state before the optimization loop starts.
+        - attempt: int
+          The current number of consecutive unsuccessful attempts to find a better state.
+        - done: bool
+          True if the algorithm is about to terminate (max attempts reached, max iterations reached, or `problem.can_stop()` returns True); False otherwise.
+        - state: np.ndarray
+          The current state vector.
+        - fitness: float
+          The current adjusted fitness value.
+        - fitness_evaluations: int
+          The cumulative number of fitness evaluations.
+        - curve: np.ndarray or None
+          The fitness curve up to the current iteration, or `None` if `curve=False`.
+        - user_data: dict
+          The user data passed in `callback_user_info`.
+
+        The callback should return a boolean: `True` to continue iterating, or `False` to stop.
+
+    callback_user_info: dict, default: None
+        Dictionary of user-managed data passed as the `user_data` parameter of the callback function.
 
     Returns
     -------
     best_state: np.ndarray
-        Numpy array containing state that optimizes fitness function.
-    best_fitness: float
-        Value of fitness function at best state.
-    fitness_curve: np.ndarray
-        Numpy array containing the fitness at every iteration.
-        Only returned if input argument :code:`curve` is :code:`True`.
-    """
-    # TODO: fix and uncomment these problematic raise statements
-    # if not isinstance(max_attempts, int) or max_attempts < 0:
-    #     raise ValueError(f"max_attempts must be a positive integer. Got {max_attempts}")
-    # if not (isinstance(max_iters, int) or max_iters == np.inf) or (isinstance(max_iters, int) and max_iters < 0):
-    #     raise ValueError(f"max_iters must be a positive integer or np.inf. Got {max_iters}")
-    # if init_state is not None and len(init_state) != problem.get_length():
-    #     raise ValueError(f"init_state must have the same length as problem. Got {len(init_state)}")
+        Numpy array containing the state that optimizes the fitness function.
 
-    # Set random seed
+    best_fitness: float
+        Value of the fitness function at the best state.
+
+    fitness_curve: np.ndarray
+        Numpy array of shape (n_iterations, 2), where each row represents:
+
+        - Column 0: Adjusted fitness at the current iteration.
+        - Column 1: Cumulative number of fitness evaluations.
+
+        Only returned if the input argument `curve` is `True`.
+
+    Notes
+    -----
+    - The `gradient_descent` function is specifically designed for optimizing neural network weights.
+    - The `state_fitness_callback` function is also called before the optimization loop starts (iteration 0) with the initial state and fitness values.
+
+    """
+    # Validate parameters
+    if not isinstance(max_attempts, int) or max_attempts <= 0:
+        raise ValueError(f"max_attempts must be a positive integer greater than 0. Got {max_attempts}")
+    if not (isinstance(max_iters, int) or max_iters == np.inf) or max_iters <= 0:
+        raise ValueError(f"max_iters must be a positive integer greater than 0 or np.inf. Got {max_iters}")
+
+    # Set random seed for reproducibility
     if isinstance(random_state, int) and random_state > 0:
         np.random.seed(random_state)
 
-    # Initialize problem
+    # Initialize the optimization problem
     fitness_curve = []
     if init_state is None:
         problem.reset()
     else:
         problem.set_state(init_state)
+
+    # Initial callback invocation (iteration 0)
     if state_fitness_callback is not None:
+        if callback_user_info is None:
+            callback_user_info = {}
         state_fitness_callback(
             iteration=0,
-            max_attempts_reached=False,
+            attempt=0,
+            done=False,
             state=problem.get_state(),
             fitness=problem.get_adjusted_fitness(),
+            fitness_evaluations=problem.fitness_evaluations,
+            curve=np.asarray(fitness_curve) if curve else None,
             user_data=callback_user_info,
         )
 
@@ -93,46 +136,54 @@ def gradient_descent(
 
     attempts = 0
     iters = 0
-    continue_iterating = True
     while attempts < max_attempts and iters < max_iters:
         iters += 1
 
-        # Update weights
+        # Calculate the gradient updates
         updates = flatten_weights(problem.calculate_updates())
+
+        # Update the state (weights) using the calculated gradients
         next_state = problem.update_state(updates)
         next_fitness = problem.eval_fitness(next_state)
 
         current_fitness = problem.get_fitness()
-        # Adjust comparison for maximization or minimization
+        # Check if the new state is better
         if problem.get_maximize() * next_fitness > problem.get_maximize() * current_fitness:
-            attempts = 0
+            attempts = 0  # Reset attempts since improvement was found
         else:
-            attempts += 1
+            attempts += 1  # Increment attempts since no improvement
 
+        # Record fitness curve if requested
         if curve:
             fitness_curve.append((problem.get_adjusted_fitness(), problem.fitness_evaluations))
 
-        # Invoke callback
+        # Invoke callback function
         if state_fitness_callback is not None:
             max_attempts_reached = attempts == max_attempts or iters == max_iters or problem.can_stop()
             continue_iterating = state_fitness_callback(
                 iteration=iters,
+                attempt=attempts,
+                done=max_attempts_reached,
                 state=problem.get_state(),
                 fitness=problem.get_adjusted_fitness(),
-                attempt=attempts,
-                max_attempts_reached=max_attempts_reached,
+                fitness_evaluations=problem.fitness_evaluations,
                 curve=np.asarray(fitness_curve) if curve else None,
                 user_data=callback_user_info,
             )
+            # Break out if callback requests termination
+            if not continue_iterating:
+                break
 
-        if not continue_iterating:
-            break
-
-        # Update best state and best fitness
+        # Update best state and best fitness if current is better
         if problem.get_maximize() * next_fitness > problem.get_maximize() * best_fitness:
             best_fitness = next_fitness
             best_state = next_state
 
+        # Update the problem's current state
         problem.set_state(next_state)
+
+        # Check if the problem signals to stop
+        if problem.can_stop():
+            break
 
     return best_state, best_fitness, np.asarray(fitness_curve) if curve else None

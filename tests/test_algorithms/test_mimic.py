@@ -31,7 +31,7 @@ class TestMimic:
 
     def test_mimic_invalid_noise_value(self):
         noise = 1
-        with pytest.raises(ValueError, match=f"noise must be between 0 and 0.1. Got {noise}"):
+        with pytest.raises(ValueError, match=re.escape(f"noise must be between 0 and 0.1 (inclusive). Got {noise}")):
             problem = DiscreteOpt(5, OneMax())
             mimic(problem, random_state=SEED, noise=noise)
 
@@ -39,7 +39,7 @@ class TestMimic:
         """Test that mimic raises ValueError when problem type is continuous."""
         fitness = CustomFitness(lambda x: sum(x))
         problem = ContinuousOpt(length=5, fitness_fn=fitness)
-        with pytest.raises(ValueError, match="problem type must be discrete or tsp."):
+        with pytest.raises(ValueError, match="MIMIC algorithm cannot be used for continuous optimization problems."):
             mimic(problem, random_state=SEED)
 
     def test_mimic_invalid_pop_size(self):

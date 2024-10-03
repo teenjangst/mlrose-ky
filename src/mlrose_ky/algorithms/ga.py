@@ -3,7 +3,7 @@
 # Authors: Genevieve Hayes (modified by Andrew Rollings, Kyle Nakamura)
 # License: BSD 3-clause
 
-from typing import Callable, Any
+from typing import Callable, Any, Optional
 
 import numpy as np
 
@@ -111,7 +111,7 @@ def genetic_alg(
     curve: bool = False,
     random_state: int = None,
     state_fitness_callback: Callable = None,
-    callback_user_info: Any = None,
+    callback_user_info: dict = None,
     hamming_factor: float = 0.0,
     hamming_decay_factor: float = None,
 ) -> tuple[np.ndarray, float, np.ndarray | None]:
@@ -121,117 +121,191 @@ def genetic_alg(
     Parameters
     ----------
     problem : optimization object
-        Object containing fitness function optimization problem to be solved.
+        Object containing the optimization problem to be solved.
+        For example, `DiscreteOpt()` or `ContinuousOpt()`.
+
     pop_size : int, default: 200
-        Size of population to be used in genetic algorithm.
-    pop_breed_percent : float, default 0.75
-        Percentage of population to breed in each iteration.
-        The remainder of the pop will be filled from the elite and dregs of the prior generation in a ratio specified by elite_dreg_ratio.
-    elite_dreg_ratio : float, default:0.95
-        The ratio of elites:dregs added directly to the next generation.
-        For the default value, 95% of the added population will be elites, 5% will be dregs.
+        Size of the population to be used in the genetic algorithm.
+        Must be a positive integer greater than 0.
+
+    pop_breed_percent : float, default: 0.75
+        Percentage of the population to breed in each iteration.
+        Must be a float between 0 and 1 (exclusive).
+
+    elite_dreg_ratio : float, default: 0.99
+        Ratio of elites to dregs added directly to the next generation from the current population.
+        Must be a float between 0 and 1 (inclusive).
+        A higher value favors more elites over dregs.
+
     minimum_elites : int, default: 0
-        Minimum number of elites to be added to next generation
+        Minimum number of elite individuals to be added to the next generation.
+        Must be a non-negative integer.
+
     minimum_dregs : int, default: 0
-        Minimum number of dregs to be added to next generation
+        Minimum number of dreg (lowest fitness) individuals to be added to the next generation.
+        Must be a non-negative integer.
+
     mutation_prob : float, default: 0.1
-        Probability of a mutation at each element of the state vector during reproduction, expressed as a value between 0 and 1.
+        Probability of a mutation at each element of the state vector during reproduction.
+        Must be a float between 0 and 1 (inclusive).
+
     max_attempts : int, default: 10
         Maximum number of attempts to find a better state at each step.
-    max_iters : int | float, default: np.inf
+        Must be a positive integer greater than 0.
+
+    max_iters : int or float, default: np.inf
         Maximum number of iterations of the algorithm.
+        Must be a positive integer greater than 0 or `np.inf`.
+
     curve : bool, default: False
-        Boolean to keep fitness values for a curve.
-        If :code:`False`, then no curve is stored.
-        If :code:`True`, then a history of fitness values is provided as a third return value.
+        Whether to keep fitness values for a curve.
+        If `False`, then no curve is stored.
+        If `True`, then a history of fitness values is provided as a third return value.
+
     random_state : int, default: None
-        If random_state is a positive integer, random_state is the seed used by np.random.seed(); otherwise, the random seed is not set.
-    state_fitness_callback : Callable[..., Any], default: None
-        If specified, this callback will be invoked once per iteration.
-        Parameters are (iteration, max attempts reached?, current best state, current best fit, user callback data).
-        Return true to continue iterating, or false to stop.
-    callback_user_info : Any, default: None
-        User data passed as last parameter of callback.
+        Seed for the random number generator.
+
+    state_fitness_callback : callable, default: None
+        If specified, this callback function is invoked once per iteration with the following parameters:
+
+        - iteration: int
+          The current iteration number (starting from 0). `iteration=0` indicates the initial state before the optimization loop starts.
+        - attempt: int
+          The current number of consecutive unsuccessful attempts to find a better state.
+        - done: bool
+          True if the algorithm is about to terminate (max attempts reached, max iterations reached, or `problem.can_stop()` returns True); False otherwise.
+        - state: np.ndarray
+          The current state vector.
+        - fitness: float
+          The current adjusted fitness value.
+        - fitness_evaluations: int
+          The cumulative number of fitness evaluations.
+        - curve: np.ndarray or None
+          The fitness curve up to the current iteration, or `None` if `curve=False`.
+        - user_data: dict
+          The user data passed in `callback_user_info`.
+
+        The callback should return a boolean: `True` to continue iterating, or `False` to stop.
+
+    callback_user_info: dict, default: None
+        Dictionary of user-managed data passed as the `user_data` parameter of the callback function.
+
     hamming_factor : float, default: 0.0
         Factor to account for Hamming distance in parent selection.
+        Must be a float between 0 and 1 (inclusive).
+        A higher value increases the likelihood of selecting parents with greater diversity.
+
     hamming_decay_factor : float, default: None
-        Decay factor for the hamming_factor over iterations.
+        Decay factor for the `hamming_factor` over iterations.
+        If specified, `hamming_factor` is multiplied by this value each iteration.
 
     Returns
     -------
     best_state : np.ndarray
-        Numpy array containing state that optimizes the fitness function.
+        Numpy array containing the state that optimizes the fitness function.
+
     best_fitness : float
-        Value of fitness function at best state.
+        Value of the fitness function at the best state.
+
     fitness_curve : np.ndarray
-        Numpy array of arrays containing the fitness of the entire population at every iteration.
-        Only returned if input argument :code:`curve` is :code:`True`.
+        Numpy array of shape (n_iterations, 2), where each row represents:
+
+        - Column 0: Adjusted fitness at the current iteration.
+        - Column 1: Cumulative number of fitness evaluations.
+
+        Only returned if the input argument `curve` is `True`.
+
+    Notes
+    -----
+    - The genetic algorithm evolves a population of candidate solutions by selecting individuals based on fitness, reproducing them with crossover and mutation, and iteratively improving the population.
+    - The `state_fitness_callback` function is also called before the optimization loop starts (iteration 0) with the initial state and fitness values.
 
     References
     ----------
     Russell, S. and P. Norvig (2010). *Artificial Intelligence: A Modern Approach*, 3rd edition.
     Prentice Hall, New Jersey, USA.
     """
-    # TODO: fix and uncomment these problematic raise statements
-    # if not isinstance(pop_size, int) or pop_size < 0:
-    #     raise ValueError(f"pop_size must be a positive integer. Got {pop_size}")
-    # if not 0 <= pop_breed_percent <= 1:
-    #     raise ValueError(f"pop_breed_percent must be between 0 and 1. Got {pop_breed_percent}")
-    # if not 0 <= elite_dreg_ratio <= 1:
-    #     raise ValueError(f"elite_dreg_ratio must be between 0 and 1. Got {elite_dreg_ratio}")
-    # if not 0 <= mutation_prob <= 1:
-    #     raise ValueError(f"mutation_prob must be between 0 and 1. Got {mutation_prob}")
-    # if not isinstance(max_attempts, int) or max_attempts < 0:
-    #     raise ValueError(f"max_attempts must be a positive integer. Got {max_attempts}")
-    # if not (isinstance(max_iters, int) or max_iters == np.inf) or max_iters < 0:
-    #     raise ValueError(f"max_iters must be a positive integer or np.inf. Got {max_iters}")
+    # Validate parameters
+    if not isinstance(pop_size, int) or pop_size <= 0:
+        raise ValueError(f"pop_size must be a positive integer greater than 0. Got {pop_size}")
+    if not 0 < pop_breed_percent < 1:
+        raise ValueError(f"pop_breed_percent must be between 0 and 1 (exclusive). Got {pop_breed_percent}")
+    if not 0 <= elite_dreg_ratio <= 1:
+        raise ValueError(f"elite_dreg_ratio must be between 0 and 1 (inclusive). Got {elite_dreg_ratio}")
+    if not isinstance(minimum_elites, int) or minimum_elites < 0:
+        raise ValueError(f"minimum_elites must be a non-negative integer. Got {minimum_elites}")
+    if not isinstance(minimum_dregs, int) or minimum_dregs < 0:
+        raise ValueError(f"minimum_dregs must be a non-negative integer. Got {minimum_dregs}")
+    if not 0 <= mutation_prob <= 1:
+        raise ValueError(f"mutation_prob must be between 0 and 1 (inclusive). Got {mutation_prob}")
+    if not isinstance(max_attempts, int) or max_attempts <= 0:
+        raise ValueError(f"max_attempts must be a positive integer greater than 0. Got {max_attempts}")
+    if not (isinstance(max_iters, int) or max_iters == np.inf) or max_iters <= 0:
+        raise ValueError(f"max_iters must be a positive integer greater than 0 or np.inf. Got {max_iters}")
+    if not 0 <= hamming_factor <= 1:
+        raise ValueError(f"hamming_factor must be between 0 and 1 (inclusive). Got {hamming_factor}")
+    if hamming_decay_factor is not None and not 0 <= hamming_decay_factor <= 1:
+        raise ValueError(f"hamming_decay_factor must be between 0 and 1 (inclusive). Got {hamming_decay_factor}")
 
-    # Set random seed
+    # Set random seed for reproducibility
     if isinstance(random_state, int) and random_state > 0:
         np.random.seed(random_state)
 
-    # Initialize problem
+    # Initialize the optimization problem
     fitness_curve = []
     problem.reset()
     problem.random_pop(pop_size)
+
+    # Initial callback invocation (iteration 0)
     if state_fitness_callback is not None:
-        # initial call with base data
-        state_fitness_callback(
+        if callback_user_info is None:
+            callback_user_info = {}
+        continue_iterating = state_fitness_callback(
             iteration=0,
+            attempt=0,
+            done=False,
             state=problem.get_state(),
             fitness=problem.get_adjusted_fitness(),
             fitness_evaluations=problem.fitness_evaluations,
+            curve=np.asarray(fitness_curve) if curve else None,
             user_data=callback_user_info,
         )
+        if not continue_iterating:
+            # Early termination as per callback request
+            best_state = problem.get_state()
+            best_fitness = problem.get_maximize() * problem.get_fitness()
+            return best_state, best_fitness, np.asarray(fitness_curve) if curve else None
 
-    get_hamming_distance_func: Callable[[np.ndarray, np.ndarray], np.ndarray] | None = None
+    # Determine Hamming distance function if needed
+    get_hamming_distance_func: Optional[Callable[[np.ndarray, np.ndarray], np.ndarray]] = None
     if hamming_factor > 0:
-        g1 = problem.get_population()[0][0]
-        if isinstance(g1, float) or g1.dtype == "float64":
+        sample_gene = problem.get_population()[0][0]
+        if isinstance(sample_gene, float) or sample_gene.dtype == "float64":
             get_hamming_distance_func = _get_hamming_distance_float
         else:
             get_hamming_distance_func = _get_hamming_distance_default
 
-    # initialize survivor count, elite count and dreg count
+    # Initialize counts for breeding and survivors
     breeding_pop_size = int(pop_size * pop_breed_percent) - (minimum_elites + minimum_dregs)
     survivors_size = pop_size - breeding_pop_size
     dregs_size = max(int(survivors_size * (1.0 - elite_dreg_ratio)) if survivors_size > 1 else 0, minimum_dregs)
     elites_size = max(survivors_size - dregs_size, minimum_elites)
+
+    # Adjust breeding population size if necessary
     if dregs_size + elites_size > survivors_size:
         over_population = dregs_size + elites_size - survivors_size
         breeding_pop_size -= over_population
 
     attempts = 0
     iters = 0
-    continue_iterating = True
-    while (attempts < max_attempts) and (iters < max_iters):
+    while attempts < max_attempts and iters < max_iters:
         iters += 1
         problem.current_iteration += 1
 
-        # Calculate breeding probabilities
+        # Calculate mating probabilities based on fitness
         problem.eval_mate_probs()
 
-        # Create next generation of population
+        # Create next generation
         next_gen = []
         for _ in range(breeding_pop_size):
             # Select parents
@@ -239,42 +313,46 @@ def genetic_alg(
                 pop_size=pop_size, problem=problem, hamming_factor=hamming_factor, get_hamming_distance_func=get_hamming_distance_func
             )
 
-            # Create offspring
+            # Create offspring through reproduction and mutation
             child = problem.reproduce(parent_1, parent_2, mutation_prob)
             next_gen.append(child)
 
-        # fill remaining population with elites/dregs
+        # Fill the remaining population with elites and dregs
         if survivors_size > 0:
             last_gen = list(zip(problem.get_population(), problem.get_pop_fitness()))
             sorted_parents = sorted(last_gen, key=lambda f: -f[1])
             best_parents = sorted_parents[:elites_size]
             next_gen.extend([p[0] for p in best_parents])
+
             if dregs_size > 0:
                 worst_parents = sorted_parents[-dregs_size:]
                 next_gen.extend([p[0] for p in worst_parents])
 
+        # Ensure the next generation has the correct population size
         next_gen = np.array(next_gen[:pop_size])
         problem.set_population(next_gen)
 
+        # Evaluate the best child in the new generation
         next_state = problem.best_child()
         next_fitness = problem.eval_fitness(next_state)
 
-        # If best child is an improvement, move to that state and reset attempts counter
+        # If the best child is an improvement, update the current state
         if next_fitness > problem.get_fitness():
             problem.set_state(next_state)
-            attempts = 0
+            attempts = 0  # Reset attempts since improvement was found
         else:
-            attempts += 1
+            attempts += 1  # Increment attempts since no improvement
 
+        # Record fitness curve if requested
         if curve:
             fitness_curve.append((problem.get_adjusted_fitness(), problem.fitness_evaluations))
 
-        # invoke callback
+        # Invoke callback function
         if state_fitness_callback is not None:
             max_attempts_reached = attempts == max_attempts or iters == max_iters or problem.can_stop()
             continue_iterating = state_fitness_callback(
                 iteration=iters,
-                attempt=attempts + 1,
+                attempt=attempts,
                 done=max_attempts_reached,
                 state=problem.get_state(),
                 fitness=problem.get_adjusted_fitness(),
@@ -282,17 +360,21 @@ def genetic_alg(
                 curve=np.asarray(fitness_curve) if curve else None,
                 user_data=callback_user_info,
             )
+            # Break out if callback requests termination
+            if not continue_iterating:
+                break
 
-        # decay hamming factor
+        # Decay hamming factor if specified
         if hamming_decay_factor is not None and hamming_factor > 0.0:
             hamming_factor *= hamming_decay_factor
             hamming_factor = max(min(hamming_factor, 1.0), 0.0)
 
-        # break out if requested
-        if not continue_iterating:
+        # Check if the problem signals to stop
+        if problem.can_stop():
             break
 
-    best_fitness = problem.get_maximize() * problem.get_fitness()
+    # Prepare the final best state and fitness
     best_state = problem.get_state()
+    best_fitness = problem.get_maximize() * problem.get_fitness()
 
     return best_state, best_fitness, np.asarray(fitness_curve) if curve else None

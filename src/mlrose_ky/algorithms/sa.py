@@ -48,7 +48,7 @@ def simulated_annealing(
         third return value.
     random_state: int, default: None
         Seed for the random number generator.
-    state_fitness_callback: callable, default: None
+    state_fitness_callback: Callable, default: None
         If specified, this callback function is invoked once per iteration with
         the following parameters:
 
@@ -63,8 +63,7 @@ def simulated_annealing(
 
         The callback should return a boolean: :code:`True` to continue iterating,
         or :code:`False` to stop.
-
-    callback_user_info: any, default: None
+    callback_user_info: Any, default: None
         User data passed as the last parameter of the callback function.
 
     Returns

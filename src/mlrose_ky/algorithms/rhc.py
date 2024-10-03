@@ -1,4 +1,4 @@
-"""Functions to implement the randomized optimization and search algorithms."""
+"""Implementation of the Randomized Hill Climbing optimization algorithm."""
 
 # Authors: Genevieve Hayes (modified by Andrew Rollings, Kyle Nakamura)
 # License: BSD 3-clause

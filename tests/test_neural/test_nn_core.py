@@ -3,6 +3,8 @@
 # Author: Kyle Nakamura
 # License: BSD 3-clause
 
+import warnings
+
 import numpy as np
 import pytest
 
@@ -165,19 +167,23 @@ class TestNNCore:
 
     def test_predict(self):
         """Test the predict method."""
-        nn = _NNCore(hidden_nodes=self.hidden_nodes, activation=self.activation, algorithm=self.algorithm)
-        nn.fit(self.X_train, self.y_train)
-        # Predict using the trained model
-        y_pred = nn.predict(self.X_train)
-        assert y_pred is not None
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            nn = _NNCore(hidden_nodes=self.hidden_nodes, activation=self.activation, algorithm=self.algorithm)
+            nn.fit(self.X_train, self.y_train)
+            # Predict using the trained model
+            y_pred = nn.predict(self.X_train)
+            assert y_pred is not None
 
     def test_predict_invalid_input(self):
         """Test that predict raises ValueError for invalid input dimensions."""
-        nn = _NNCore(hidden_nodes=self.hidden_nodes, activation=self.activation, algorithm=self.algorithm)
-        nn.fit(self.X_train, self.y_train)
-        X_invalid = np.array([[1, 2, 3]])  # Invalid dimensions
-        with pytest.raises(ValueError, match="The number of columns in X must equal"):
-            nn.predict(X_invalid)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            nn = _NNCore(hidden_nodes=self.hidden_nodes, activation=self.activation, algorithm=self.algorithm)
+            nn.fit(self.X_train, self.y_train)
+            X_invalid = np.array([[1, 2, 3]])  # Invalid dimensions
+            with pytest.raises(ValueError, match="The number of columns in X must equal"):
+                nn.predict(X_invalid)
 
     def test_run_with_gd_init_weights_none(self):
         """Test _run_with_gd with init_weights=None."""

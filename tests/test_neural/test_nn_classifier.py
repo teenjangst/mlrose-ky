@@ -3,6 +3,7 @@
 # Author: Kyle Nakamura
 # License: BSD 3-clause
 
+import warnings
 
 import numpy as np
 import pytest
@@ -158,67 +159,69 @@ class TestNNClassifier:
 
     def test_fit(self):
         """Test the fit method."""
-        nn = NNClassifier(
-            runner=self.runner,
-            algorithm=self.algorithm,
-            activation=self.activation,
-            hidden_layer_sizes=self.hidden_layer_sizes,
-            max_iters=self.max_iters,
-            max_attempts=self.max_attempts,
-            learning_rate_init=self.learning_rate_init,
-            bias=self.bias,
-            early_stopping=self.early_stopping,
-            clip_max=self.clip_max,
-            seed=self.seed,
-        )
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            nn = NNClassifier(
+                runner=self.runner,
+                algorithm=self.algorithm,
+                activation=self.activation,
+                hidden_layer_sizes=self.hidden_layer_sizes,
+                max_iters=self.max_iters,
+                max_attempts=self.max_attempts,
+                learning_rate_init=self.learning_rate_init,
+                bias=self.bias,
+                early_stopping=self.early_stopping,
+                clip_max=self.clip_max,
+                seed=self.seed,
+            )
 
-        # Simulate normal fitting
-        nn.fit(self.X_train, self.y_train)
-        assert nn.fitted_weights is not None
-        assert nn.loss is not None
-        assert nn.output_activation is not None
-        assert nn.fit_started_ is True
+            # Simulate normal fitting
+            nn.fit(self.X_train, self.y_train)
+            assert nn.fitted_weights is not None
+            assert nn.loss is not None
+            assert nn.output_activation is not None
+            assert nn.fit_started_ is True
 
-        # Simulate runner.has_aborted() is True
-        self.runner.has_aborted_value = True
-        nn_aborted = NNClassifier(runner=self.runner, hidden_layer_sizes=self.hidden_layer_sizes)
-        nn_aborted.fit(self.X_train, self.y_train)
-        # Check if fitted_weights is a numeric array, then check for NaNs
-        if isinstance(nn_aborted.fitted_weights, np.ndarray):
-            assert np.isnan(nn_aborted.fitted_weights).all()
-        else:
-            assert nn_aborted.fitted_weights is None
+            # Simulate runner.has_aborted() is True
+            self.runner.has_aborted_value = True
+            nn_aborted = NNClassifier(runner=self.runner, hidden_layer_sizes=self.hidden_layer_sizes)
+            nn_aborted.fit(self.X_train, self.y_train)
+            # Check if fitted_weights is a numeric array, then check for NaNs
+            if isinstance(nn_aborted.fitted_weights, np.ndarray):
+                assert np.isnan(nn_aborted.fitted_weights).all()
+            else:
+                assert nn_aborted.fitted_weights is None
 
-        # Simulate runner.replay_mode() is True
-        self.runner.has_aborted_value = False
-        self.runner.replay_mode_value = True
-        nn_replay = NNClassifier(runner=self.runner, algorithm="random_hill_climb")
-        nn_replay.fit(self.X_train, self.y_train)
-        # Check if fitted_weights is a numeric array, then check for NaNs
-        if isinstance(nn_replay.fitted_weights, np.ndarray):
-            assert np.isnan(nn_replay.fitted_weights).all()
-        else:
-            assert nn_replay.fitted_weights is None
-        # Check if loss is a numeric array, then check for NaNs
-        if isinstance(nn_replay.loss, np.ndarray):
-            assert np.isnan(nn_replay.loss).all()
-        else:
-            assert nn_replay.loss is np.nan or None
-        assert nn_replay.output_activation is not None
+            # Simulate runner.replay_mode() is True
+            self.runner.has_aborted_value = False
+            self.runner.replay_mode_value = True
+            nn_replay = NNClassifier(runner=self.runner, algorithm="random_hill_climb")
+            nn_replay.fit(self.X_train, self.y_train)
+            # Check if fitted_weights is a numeric array, then check for NaNs
+            if isinstance(nn_replay.fitted_weights, np.ndarray):
+                assert np.isnan(nn_replay.fitted_weights).all()
+            else:
+                assert nn_replay.fitted_weights is None
+            # Check if loss is a numeric array, then check for NaNs
+            if isinstance(nn_replay.loss, np.ndarray):
+                assert np.isnan(nn_replay.loss).all()
+            else:
+                assert nn_replay.loss is np.nan or None
+            assert nn_replay.output_activation is not None
 
-        # Test with algorithm is None
-        nn_no_algo = NNClassifier(runner=self.runner)
-        nn_no_algo.fit(self.X_train, self.y_train)
-        # Since algorithm is None, we expect that fitted_weights remains None
-        assert nn_no_algo.fitted_weights is None
-        assert nn_no_algo.loss is None
-        assert nn_no_algo.output_activation is None
+            # Test with algorithm is None
+            nn_no_algo = NNClassifier(runner=self.runner)
+            nn_no_algo.fit(self.X_train, self.y_train)
+            # Since algorithm is None, we expect that fitted_weights remains None
+            assert nn_no_algo.fitted_weights is None
+            assert nn_no_algo.loss is None
+            assert nn_no_algo.output_activation is None
 
-        # Test with init_weights provided
-        nn_with_init_weights = NNClassifier(runner=self.runner, algorithm=self.algorithm, seed=self.seed)
-        nn_with_init_weights.fit(self.X_train, self.y_train, init_weights=np.ones(nn_with_init_weights.node_count))
-        assert nn_with_init_weights.fitted_weights is not None
-        assert nn_with_init_weights.loss is not None
+            # Test with init_weights provided
+            nn_with_init_weights = NNClassifier(runner=self.runner, algorithm=self.algorithm, seed=self.seed)
+            nn_with_init_weights.fit(self.X_train, self.y_train, init_weights=np.ones(nn_with_init_weights.node_count))
+            assert nn_with_init_weights.fitted_weights is not None
+            assert nn_with_init_weights.loss is not None
 
     def test_predict(self):
         """Test the predict method."""

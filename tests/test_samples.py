@@ -4,13 +4,14 @@
 # License: BSD 3-clause
 
 from unittest.mock import patch
+
 import matplotlib.pyplot as plt
 import pytest
-from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 
-from tests.globals import SEED
 from mlrose_ky.samples import SyntheticData, plot_synthetic_dataset
+from tests.globals import SEED
 
 
 # noinspection PyMissingOrEmptyDocstring

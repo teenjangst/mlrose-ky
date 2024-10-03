@@ -90,9 +90,9 @@ def random_hill_climb(
     best_fitness_curve = []
     all_curves = []
 
+    problem.reset()
     for current_restart in range(restarts + 1):
-        # Initialize problem
-        fitness_curve = []
+        # Initialize optimization problem
         fevals = problem.fitness_evaluations
         if init_state is None:
             problem.reset()
@@ -101,6 +101,7 @@ def random_hill_climb(
 
         problem.fitness_evaluations = fevals
 
+        fitness_curve = []
         callback_extra_data = None
         if state_fitness_callback is not None:
             callback_extra_data = callback_user_info + [("current_restart", current_restart)]
@@ -123,7 +124,6 @@ def random_hill_climb(
             next_state = problem.random_neighbor()
             next_fitness = problem.eval_fitness(next_state)
 
-            # FIXME: RHC should move to neighbor if >= current fitness (?)
             # If best neighbor is an improvement, move to that state and reset attempts counter
             current_fitness = problem.get_fitness()
             if next_fitness > current_fitness:

@@ -27,7 +27,7 @@
 | src/mlrose\_ky/algorithms/mutators/shift\_one\_mutator.py     |       14 |        0 |    100% |           |
 | src/mlrose\_ky/algorithms/mutators/swap\_mutator.py           |       11 |        0 |    100% |           |
 | src/mlrose\_ky/algorithms/rhc.py                              |       55 |       12 |     78% |107-109, 136-139, 143-156, 164, 168 |
-| src/mlrose\_ky/algorithms/sa.py                               |       42 |        5 |     88% |95, 112, 136-137, 150 |
+| src/mlrose\_ky/algorithms/sa.py                               |       48 |        0 |    100% |           |
 | src/mlrose\_ky/decorators/\_\_init\_\_.py                     |        1 |        0 |    100% |           |
 | src/mlrose\_ky/decorators/short\_name\_decorator.py           |       12 |        0 |    100% |           |
 | src/mlrose\_ky/fitness/\_\_init\_\_.py                        |       10 |        0 |    100% |           |
@@ -93,7 +93,7 @@
 | src/mlrose\_ky/runners/utils.py                               |       14 |        2 |     86% |     37-38 |
 | src/mlrose\_ky/samples/\_\_init\_\_.py                        |        1 |        0 |    100% |           |
 | src/mlrose\_ky/samples/synthetic\_data.py                     |      123 |        0 |    100% |           |
-|                                                     **TOTAL** | **2885** |  **277** | **90%** |           |
+|                                                     **TOTAL** | **2891** |  **272** | **91%** |           |
 
 
 ## Setup coverage badge

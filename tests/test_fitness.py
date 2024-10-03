@@ -5,18 +5,7 @@
 
 import numpy as np
 
-from mlrose_ky import (
-    OneMax,
-    FlipFlop,
-    FourPeaks,
-    SixPeaks,
-    ContinuousPeaks,
-    Knapsack,
-    TravellingSales,
-    Queens,
-    MaxKColor,
-    CustomFitness,
-)
+from mlrose_ky import OneMax, FlipFlop, FourPeaks, SixPeaks, ContinuousPeaks, Knapsack, TravellingSales, Queens, MaxKColor, CustomFitness
 
 # noinspection PyProtectedMember
 from mlrose_ky.fitness._discrete_peaks_base import _DiscretePeaksBase
@@ -175,6 +164,7 @@ def test_max_k_color():
 def test_custom_fitness():
     """Test CustomFitness fitness function"""
 
+    # noinspection PyMissingOrEmptyDocstring
     def custom_fitness(_state, c):
         return c * np.sum(_state)
 

@@ -76,3 +76,28 @@ class TestMimic:
         best_state, best_fitness, _ = mimic(problem, random_state=SEED)
         x = np.zeros(5)
         assert np.array_equal(best_state, x) and best_fitness == 0
+
+    def test_mimic_callback_early_termination(self):
+        """Test mimic with early termination via state_fitness_callback when callback_user_info is None"""
+        problem = DiscreteOpt(5, OneMax())
+
+        def callback_function(iteration, attempt, done, state, fitness, fitness_evaluations, curve, user_data):
+            return False  # Terminate immediately
+
+        best_state, best_fitness, _ = mimic(problem, state_fitness_callback=callback_function, random_state=SEED)
+        # Verify that the best_state is valid
+        assert isinstance(best_state, np.ndarray)
+        assert isinstance(best_fitness, float)
+
+    def test_mimic_problem_can_stop(self):
+        """Test mimic where problem.can_stop() returns True"""
+
+        class TestProblem(DiscreteOpt):
+            def can_stop(self):
+                return True
+
+        problem = TestProblem(5, OneMax())
+        best_state, best_fitness, _ = mimic(problem, random_state=SEED)
+        # Since can_stop() returns True, the algorithm should terminate immediately
+        assert isinstance(best_state, np.ndarray)
+        assert isinstance(best_fitness, float)

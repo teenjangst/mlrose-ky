@@ -31,17 +31,17 @@
 | src/mlrose\_ky/decorators/\_\_init\_\_.py                     |        1 |        0 |    100% |           |
 | src/mlrose\_ky/decorators/short\_name\_decorator.py           |       12 |        0 |    100% |           |
 | src/mlrose\_ky/fitness/\_\_init\_\_.py                        |       10 |        0 |    100% |           |
-| src/mlrose\_ky/fitness/\_discrete\_peaks\_base.py             |       14 |        2 |     86% |    38, 66 |
-| src/mlrose\_ky/fitness/continuous\_peaks.py                   |       32 |        3 |     91% |45, 104, 123 |
-| src/mlrose\_ky/fitness/custom\_fitness.py                     |       15 |        2 |     87% |    60, 85 |
-| src/mlrose\_ky/fitness/flip\_flop.py                          |       18 |        2 |     89% |    52, 77 |
-| src/mlrose\_ky/fitness/four\_peaks.py                         |       19 |        2 |     89% |    65, 86 |
-| src/mlrose\_ky/fitness/knapsack.py                            |       30 |        7 |     77% |72, 74, 76, 78, 80, 104, 106 |
-| src/mlrose\_ky/fitness/max\_k\_color.py                       |       18 |        1 |     94% |        92 |
-| src/mlrose\_ky/fitness/one\_max.py                            |       11 |        1 |     91% |        53 |
-| src/mlrose\_ky/fitness/queens.py                              |       36 |        4 |     89% |72, 95, 145, 148 |
-| src/mlrose\_ky/fitness/six\_peaks.py                          |       22 |        2 |     91% |    66, 87 |
-| src/mlrose\_ky/fitness/travelling\_sales.py                   |       54 |        8 |     85% |57, 79, 81, 83, 162, 164, 166, 168 |
+| src/mlrose\_ky/fitness/\_discrete\_peaks\_base.py             |       18 |        0 |    100% |           |
+| src/mlrose\_ky/fitness/continuous\_peaks.py                   |       32 |        0 |    100% |           |
+| src/mlrose\_ky/fitness/custom\_fitness.py                     |       17 |        0 |    100% |           |
+| src/mlrose\_ky/fitness/flip\_flop.py                          |       18 |        0 |    100% |           |
+| src/mlrose\_ky/fitness/four\_peaks.py                         |       19 |        0 |    100% |           |
+| src/mlrose\_ky/fitness/knapsack.py                            |       30 |        0 |    100% |           |
+| src/mlrose\_ky/fitness/max\_k\_color.py                       |       21 |        0 |    100% |           |
+| src/mlrose\_ky/fitness/one\_max.py                            |       11 |        0 |    100% |           |
+| src/mlrose\_ky/fitness/queens.py                              |       38 |        0 |    100% |           |
+| src/mlrose\_ky/fitness/six\_peaks.py                          |       22 |        0 |    100% |           |
+| src/mlrose\_ky/fitness/travelling\_sales.py                   |       54 |        0 |    100% |           |
 | src/mlrose\_ky/generators/\_\_init\_\_.py                     |        9 |        0 |    100% |           |
 | src/mlrose\_ky/generators/continuous\_peaks\_generator.py     |       14 |        0 |    100% |           |
 | src/mlrose\_ky/generators/flip\_flop\_generator.py            |        9 |        0 |    100% |           |
@@ -93,7 +93,7 @@
 | src/mlrose\_ky/runners/utils.py                               |       14 |        2 |     86% |     37-38 |
 | src/mlrose\_ky/samples/\_\_init\_\_.py                        |        1 |        0 |    100% |           |
 | src/mlrose\_ky/samples/synthetic\_data.py                     |      123 |        0 |    100% |           |
-|                                                     **TOTAL** | **2968** |  **227** | **92%** |           |
+|                                                     **TOTAL** | **2979** |  **193** | **94%** |           |
 
 
 ## Setup coverage badge

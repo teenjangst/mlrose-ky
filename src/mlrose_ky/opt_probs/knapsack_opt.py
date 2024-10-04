@@ -71,14 +71,14 @@ class KnapsackOpt(DiscreteOpt):
         mutator: "ChangeOneMutator" = None,
         multiply_by_max_item_count: bool = False,
     ):
-        if fitness_fn is None and (weights is None and values is None):
+        if max_weight_pct <= 0 or max_weight_pct > 1.0:
+            raise ValueError(f"max_weight_pct must be between 0 (inclusive) and 1 (exclusive), got {max_weight_pct}.")
+        if fitness_fn is None and ((weights is None or not len(weights)) or (values is None or not len(values))):
             raise ValueError("Either fitness_fn or both weights and values must be specified.")
 
         if length is None:
             if weights is not None:
                 length = len(weights)
-            elif values is not None:
-                length = len(values)
             elif fitness_fn is not None:
                 length = len(fitness_fn.weights)
 

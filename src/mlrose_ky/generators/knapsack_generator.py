@@ -52,19 +52,19 @@ class KnapsackGenerator:
             If any parameter is not of the expected type or value.
         """
         if not isinstance(seed, int):
-            raise ValueError(f"Seed must be an integer. Got {seed}")
+            raise ValueError(f"Seed must be an integer. Got {seed}.")
         if not isinstance(number_of_item_types, int) or number_of_item_types <= 0:
-            raise ValueError(f"Number of item types must be a positive integer. Got {number_of_item_types}")
+            raise ValueError(f"Number of item types must be a positive integer. Got {number_of_item_types}.")
         if not isinstance(max_item_count, int) or max_item_count <= 0:
-            raise ValueError(f"Max item count must be a positive integer. Got {max_item_count}")
+            raise ValueError(f"Max item count must be a positive integer. Got {max_item_count}.")
         if not isinstance(max_weight_per_item, int) or max_weight_per_item <= 0:
-            raise ValueError(f"Max weight per item must be a positive integer. Got {max_weight_per_item}")
+            raise ValueError(f"Max weight per item must be a positive integer. Got {max_weight_per_item}.")
         if not isinstance(max_value_per_item, int) or max_value_per_item <= 0:
-            raise ValueError(f"Max value per item must be a positive integer. Got {max_value_per_item}")
-        if not isinstance(max_weight_pct, float) or not (0 <= max_weight_pct <= 1):
-            raise ValueError(f"Max weight percentage must be a float between 0 and 1. Got {max_weight_pct}")
+            raise ValueError(f"Max value per item must be a positive integer. Got {max_value_per_item}.")
+        if not isinstance(max_weight_pct, float) or not (0 <= max_weight_pct < 1):
+            raise ValueError(f"max_weight_pct must be between 0 (inclusive) and 1 (exclusive), got {max_weight_pct}.")
         if not isinstance(multiply_by_max_item_count, bool):
-            raise ValueError(f"multiply_by_max_item_count must be a boolean. Got {multiply_by_max_item_count}")
+            raise ValueError(f"multiply_by_max_item_count must be a boolean. Got {multiply_by_max_item_count}.")
 
         np.random.seed(seed)
 

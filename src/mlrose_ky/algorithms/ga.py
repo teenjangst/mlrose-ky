@@ -10,93 +10,6 @@ import numpy as np
 from mlrose_ky.decorators import short_name
 
 
-def _get_hamming_distance_default(population: np.ndarray, p1: np.ndarray) -> np.ndarray:
-    """
-    Calculate the Hamming distance between a given individual and the rest of the population.
-
-    Parameters
-    ----------
-    population : np.ndarray
-        Population of individuals.
-    p1 : np.ndarray
-        Individual to compare with the population.
-
-    Returns
-    -------
-    np.ndarray
-        Array of Hamming distances.
-    """
-    return np.array([np.count_nonzero(p1 != p2) / len(p1) for p2 in population])
-
-
-def _get_hamming_distance_float(population: np.ndarray, p1: np.ndarray) -> np.ndarray:
-    """
-    Calculate the Hamming distance (as a float) between a given individual and the rest of the population.
-
-    Parameters
-    ----------
-    population : np.ndarray
-        Population of individuals.
-    p1 : np.ndarray
-        Individual to compare with the population.
-
-    Returns
-    -------
-    np.ndarray
-        Array of Hamming distances.
-    """
-    return np.array([np.abs(p1 - p2) / len(p1) for p2 in population])
-
-
-def _genetic_alg_select_parents(
-    pop_size: int,
-    problem: Any,
-    get_hamming_distance_func: Callable[[np.ndarray, np.ndarray], np.ndarray] | None,
-    hamming_factor: float = 0.0,
-) -> tuple[np.ndarray, np.ndarray]:
-    """
-    Select parents for the next generation in the genetic algorithm.
-
-    Parameters
-    ----------
-    pop_size : int
-        Size of the population.
-    problem : optimization object
-        The optimization problem instance.
-    get_hamming_distance_func : Callable[[np.ndarray, np.ndarray], np.ndarray]
-        Function to calculate Hamming distance.
-    hamming_factor : float, default: 0.0
-        Factor to account for Hamming distance in parent selection.
-
-    Returns
-    -------
-    tuple
-        Selected parents (p1, p2) for reproduction.
-    """
-    mating_probabilities = problem.get_mate_probs()
-
-    if get_hamming_distance_func is not None and hamming_factor > 0.01:
-        population = problem.get_population()
-        selected = np.random.choice(pop_size, p=mating_probabilities)
-        p1 = population[selected]
-
-        hamming_distances = get_hamming_distance_func(population, p1)
-        hfa = hamming_factor / (1.0 - hamming_factor)
-        hamming_distances = hamming_distances * hfa * mating_probabilities
-        hamming_distances /= hamming_distances.sum()
-
-        selected = np.random.choice(pop_size, p=hamming_distances)
-        p2 = population[selected]
-
-        return p1, p2
-
-    selected = np.random.choice(pop_size, size=2, p=mating_probabilities)
-    p1 = problem.get_population()[selected[0]]
-    p2 = problem.get_population()[selected[1]]
-
-    return p1, p2
-
-
 @short_name("ga")
 def genetic_alg(
     problem: Any,
@@ -380,3 +293,90 @@ def genetic_alg(
     best_fitness = problem.get_maximize() * problem.get_fitness()
 
     return best_state, best_fitness, np.asarray(fitness_curve) if curve else None
+
+
+def _get_hamming_distance_default(population: np.ndarray, p1: np.ndarray) -> np.ndarray:
+    """
+    Calculate the Hamming distance between a given individual and the rest of the population.
+
+    Parameters
+    ----------
+    population : np.ndarray
+        Population of individuals.
+    p1 : np.ndarray
+        Individual to compare with the population.
+
+    Returns
+    -------
+    np.ndarray
+        Array of Hamming distances.
+    """
+    return np.array([np.count_nonzero(p1 != p2) / len(p1) for p2 in population])
+
+
+def _get_hamming_distance_float(population: np.ndarray, p1: np.ndarray) -> np.ndarray:
+    """
+    Calculate the Hamming distance (as a float) between a given individual and the rest of the population.
+
+    Parameters
+    ----------
+    population : np.ndarray
+        Population of individuals.
+    p1 : np.ndarray
+        Individual to compare with the population.
+
+    Returns
+    -------
+    np.ndarray
+        Array of Hamming distances.
+    """
+    return np.array([np.abs(p1 - p2) / len(p1) for p2 in population])
+
+
+def _genetic_alg_select_parents(
+    pop_size: int,
+    problem: Any,
+    get_hamming_distance_func: Callable[[np.ndarray, np.ndarray], np.ndarray] | None,
+    hamming_factor: float = 0.0,
+) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Select parents for the next generation in the genetic algorithm.
+
+    Parameters
+    ----------
+    pop_size : int
+        Size of the population.
+    problem : optimization object
+        The optimization problem instance.
+    get_hamming_distance_func : Callable[[np.ndarray, np.ndarray], np.ndarray]
+        Function to calculate Hamming distance.
+    hamming_factor : float, default: 0.0
+        Factor to account for Hamming distance in parent selection.
+
+    Returns
+    -------
+    tuple
+        Selected parents (p1, p2) for reproduction.
+    """
+    mating_probabilities = problem.get_mate_probs()
+
+    if get_hamming_distance_func is not None and hamming_factor > 0.01:
+        population = problem.get_population()
+        selected = np.random.choice(pop_size, p=mating_probabilities)
+        p1 = population[selected]
+
+        hamming_distances = get_hamming_distance_func(population, p1)
+        hfa = hamming_factor / (1.0 - hamming_factor)
+        hamming_distances = hamming_distances * hfa * mating_probabilities
+        hamming_distances /= hamming_distances.sum()
+
+        selected = np.random.choice(pop_size, p=hamming_distances)
+        p2 = population[selected]
+
+        return p1, p2
+
+    selected = np.random.choice(pop_size, size=2, p=mating_probabilities)
+    p1 = problem.get_population()[selected[0]]
+    p2 = problem.get_population()[selected[1]]
+
+    return p1, p2

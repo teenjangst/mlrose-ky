@@ -108,3 +108,82 @@ class TestGeneticAlg:
         best_state, best_fitness, _ = genetic_alg(problem, random_state=SEED)
         x = np.zeros(5)
         assert np.allclose(best_state, x, atol=0.5) and best_fitness < 1
+
+    def test_genetic_alg_callback_early_termination(self):
+        """Test genetic_alg with early termination via state_fitness_callback when callback_user_info is None"""
+        problem = DiscreteOpt(5, OneMax())
+
+        # noinspection PyMissingOrEmptyDocstring
+        def callback_function(iteration, attempt, done, state, fitness, fitness_evaluations, curve, user_data):
+            return False  # Terminate immediately
+
+        best_state, best_fitness, _ = genetic_alg(problem, state_fitness_callback=callback_function, random_state=SEED)
+        # Since the algorithm terminates immediately, best_state and best_fitness are initial state
+        # Verify that the best_state is as expected (since it's random, we can only check the type)
+        assert isinstance(best_state, np.ndarray)
+        assert isinstance(best_fitness, float)
+
+    def test_genetic_alg_hamming_factor_discrete(self):
+        """Test genetic_alg with hamming_factor > 0 for a discrete problem"""
+        problem = DiscreteOpt(5, OneMax())
+        best_state, best_fitness, _ = genetic_alg(problem, hamming_factor=0.5, random_state=SEED)
+        x = np.ones(5)
+        assert np.array_equal(best_state, x) and best_fitness == 5
+
+    def test_genetic_alg_hamming_factor_continuous(self):
+        """Test genetic_alg with hamming_factor > 0 for a continuous problem"""
+        problem = ContinuousOpt(5, OneMax())
+        best_state, best_fitness, _ = genetic_alg(problem, hamming_factor=0.5, random_state=SEED)
+        x = np.ones(5)
+        assert np.allclose(best_state, x, atol=0.5) and best_fitness > 4
+
+    def test_genetic_alg_hamming_decay_factor(self):
+        """Test genetic_alg with hamming_decay_factor specified"""
+        problem = DiscreteOpt(5, OneMax())
+        best_state, best_fitness, _ = genetic_alg(problem, hamming_factor=0.5, hamming_decay_factor=0.9, random_state=SEED)
+        x = np.ones(5)
+        assert np.array_equal(best_state, x) and best_fitness == 5
+
+    def test_genetic_alg_breeding_pop_adjustment(self):
+        """Test genetic_alg with breeding_pop_size adjustment when dregs_size + elites_size > survivors_size"""
+        problem = DiscreteOpt(5, OneMax())
+        # Set parameters to force breeding_pop_size adjustment
+        best_state, best_fitness, _ = genetic_alg(
+            problem,
+            pop_size=20,
+            pop_breed_percent=0.5,
+            minimum_elites=3,
+            minimum_dregs=3,
+            elite_dreg_ratio=0.0,  # This is key to make dregs_size large
+            random_state=SEED,
+        )
+        # Since breeding_pop_size is adjusted, ensure that algorithm runs and returns valid outputs
+        assert isinstance(best_state, np.ndarray)
+        assert isinstance(best_fitness, float)
+        # We can also check that best_fitness is less than or equal to the maximum possible fitness
+        assert best_fitness <= 5
+
+    def test_genetic_alg_negative_breeding_pop_size(self):
+        """Test genetic_alg where breeding_pop_size becomes negative and is set to zero"""
+        problem = DiscreteOpt(5, OneMax())
+        # Set parameters to force breeding_pop_size negative after adjustment
+        best_state, best_fitness, _ = genetic_alg(
+            problem, pop_size=10, pop_breed_percent=0.1, minimum_elites=8, minimum_dregs=8, elite_dreg_ratio=0.5, random_state=SEED
+        )
+        # Since breeding_pop_size becomes negative and is set to zero, the line is covered
+        # Verify that the algorithm runs and returns valid outputs
+        assert isinstance(best_state, np.ndarray)
+        assert isinstance(best_fitness, float)
+
+    def test_genetic_alg_problem_can_stop(self):
+        """Test genetic_alg where problem.can_stop() returns True"""
+
+        class TestProblem(DiscreteOpt):
+            def can_stop(self):
+                return True
+
+        problem = TestProblem(5, OneMax())
+        best_state, best_fitness, _ = genetic_alg(problem, random_state=SEED)
+        # Since can_stop() returns True, the algorithm should terminate immediately
+        assert isinstance(best_state, np.ndarray)
+        assert isinstance(best_fitness, float)

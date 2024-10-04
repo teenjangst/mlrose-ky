@@ -202,6 +202,8 @@ def genetic_alg(
 
     # Initialize counts for breeding and survivors
     breeding_pop_size = int(pop_size * pop_breed_percent) - (minimum_elites + minimum_dregs)
+    if breeding_pop_size < 0:
+        breeding_pop_size = 0  # Ensure breeding_pop_size is not negative
     survivors_size = pop_size - breeding_pop_size
     dregs_size = max(int(survivors_size * (1.0 - elite_dreg_ratio)) if survivors_size > 1 else 0, minimum_dregs)
     elites_size = max(survivors_size - dregs_size, minimum_elites)
@@ -210,6 +212,8 @@ def genetic_alg(
     if dregs_size + elites_size > survivors_size:
         over_population = dregs_size + elites_size - survivors_size
         breeding_pop_size -= over_population
+        if breeding_pop_size < 0:
+            breeding_pop_size = 0  # Ensure breeding_pop_size is not negative
 
     attempts = 0
     iters = 0
@@ -316,7 +320,8 @@ def _get_hamming_distance_default(population: np.ndarray, p1: np.ndarray) -> np.
 
 def _get_hamming_distance_float(population: np.ndarray, p1: np.ndarray) -> np.ndarray:
     """
-    Calculate the Hamming distance (as a float) between a given individual and the rest of the population.
+    Calculate the average absolute difference (Hamming distance for floats) between
+    a given individual and the rest of the population.
 
     Parameters
     ----------
@@ -328,9 +333,9 @@ def _get_hamming_distance_float(population: np.ndarray, p1: np.ndarray) -> np.nd
     Returns
     -------
     np.ndarray
-        Array of Hamming distances.
+        Array of average absolute differences (Hamming distances).
     """
-    return np.array([np.abs(p1 - p2) / len(p1) for p2 in population])
+    return np.mean(np.abs(population - p1), axis=1)
 
 
 def _genetic_alg_select_parents(

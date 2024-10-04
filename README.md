@@ -36,7 +36,7 @@
 | src/mlrose\_ky/fitness/custom\_fitness.py                     |       15 |        2 |     87% |    60, 85 |
 | src/mlrose\_ky/fitness/flip\_flop.py                          |       18 |        2 |     89% |    52, 77 |
 | src/mlrose\_ky/fitness/four\_peaks.py                         |       19 |        2 |     89% |    65, 86 |
-| src/mlrose\_ky/fitness/knapsack.py                            |       30 |        6 |     80% |72, 74, 76, 78, 104, 106 |
+| src/mlrose\_ky/fitness/knapsack.py                            |       30 |        7 |     77% |72, 74, 76, 78, 80, 104, 106 |
 | src/mlrose\_ky/fitness/max\_k\_color.py                       |       18 |        1 |     94% |        92 |
 | src/mlrose\_ky/fitness/one\_max.py                            |       11 |        1 |     91% |        53 |
 | src/mlrose\_ky/fitness/queens.py                              |       36 |        4 |     89% |72, 95, 145, 148 |
@@ -77,7 +77,7 @@
 | src/mlrose\_ky/opt\_probs/continuous\_opt.py                  |       88 |        9 |     90% |54, 60, 62, 64, 163, 203, 206, 214, 250 |
 | src/mlrose\_ky/opt\_probs/discrete\_opt.py                    |      192 |       20 |     90% |81, 87, 89-92, 137-140, 162-164, 177-178, 246, 265, 330, 362, 365, 392 |
 | src/mlrose\_ky/opt\_probs/flip\_flop\_opt.py                  |       37 |        5 |     86% |63, 66, 103-106 |
-| src/mlrose\_ky/opt\_probs/knapsack\_opt.py                    |       23 |        5 |     78% | 75, 80-83 |
+| src/mlrose\_ky/opt\_probs/knapsack\_opt.py                    |       23 |        0 |    100% |           |
 | src/mlrose\_ky/opt\_probs/max\_k\_color\_opt.py               |       50 |        3 |     94% |77, 84, 109 |
 | src/mlrose\_ky/opt\_probs/queens\_opt.py                      |       25 |        2 |     92% |    61, 65 |
 | src/mlrose\_ky/opt\_probs/tsp\_opt.py                         |       79 |        9 |     89% |53, 66-68, 77, 150, 192, 194-197 |
@@ -93,7 +93,7 @@
 | src/mlrose\_ky/runners/utils.py                               |       14 |        2 |     86% |     37-38 |
 | src/mlrose\_ky/samples/\_\_init\_\_.py                        |        1 |        0 |    100% |           |
 | src/mlrose\_ky/samples/synthetic\_data.py                     |      123 |        0 |    100% |           |
-|                                                     **TOTAL** | **2968** |  **231** | **92%** |           |
+|                                                     **TOTAL** | **2968** |  **227** | **92%** |           |
 
 
 ## Setup coverage badge

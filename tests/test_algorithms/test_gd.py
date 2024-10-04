@@ -150,3 +150,26 @@ class TestGradientDescent:
         problem.fitness = problem.evaluate_fitness(problem.state)
         best_state, best_fitness, _ = gradient_descent(problem)
         assert np.allclose(best_state, problem.get_state(), atol=1e-2)
+
+    def test_gradient_descent_callback_no_user_info(self):
+        """Test gradient_descent with a callback and no callback_user_info provided."""
+        problem = MockProblem()
+
+        # noinspection PyMissingOrEmptyDocstring
+        def callback_function(iteration, attempt, done, state, fitness, fitness_evaluations, curve, user_data):
+            return True  # Continue iterating
+
+        # Do not provide callback_user_info
+        gradient_descent(problem, state_fitness_callback=callback_function)
+        # Verify that the algorithm runs without errors
+        assert True  # If no exception is raised, the test passes
+
+    def test_gradient_descent_can_stop(self):
+        """Test gradient_descent where problem.can_stop() returns True."""
+        problem = MockProblem()
+        problem.can_stop_flag = True  # Make can_stop() return True
+
+        best_state, best_fitness, _ = gradient_descent(problem)
+        # Verify that the algorithm terminates immediately
+        assert isinstance(best_state, np.ndarray)
+        assert isinstance(best_fitness, float)

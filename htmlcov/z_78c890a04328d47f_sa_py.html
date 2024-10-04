@@ -54,8 +54,8 @@
             </div>
         </aside>
         <h2>
-            <span class="text">54 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">52<span class="text"> run</span></button>
+            <span class="text">56 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">54<span class="text"> run</span></button>
             <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">2<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_b01ad9e90ca9d376___init___py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.1">coverage.py v7.6.1</a>,
-            created at 2024-10-04 14:55 +0000
+            created at 2024-10-04 15:58 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -195,9 +195,9 @@
     <p class="run"><span class="n"><a id="t113" href="#t113">113</a></span><span class="t">    <span class="key">if</span> <span class="key">not</span> <span class="op">(</span><span class="nam">isinstance</span><span class="op">(</span><span class="nam">max_iters</span><span class="op">,</span> <span class="nam">int</span><span class="op">)</span> <span class="key">or</span> <span class="nam">max_iters</span> <span class="op">==</span> <span class="nam">np</span><span class="op">.</span><span class="nam">inf</span><span class="op">)</span> <span class="key">or</span> <span class="nam">max_iters</span> <span class="op">&lt;</span> <span class="num">0</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t114" href="#t114">114</a></span><span class="t">        <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span><span class="fst">f"</span><span class="fst">max_iters must be a positive integer or np.inf. Got </span><span class="op">{</span><span class="nam">max_iters</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t115" href="#t115">115</a></span><span class="t">    <span class="key">if</span> <span class="nam">init_state</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span> <span class="key">and</span> <span class="nam">len</span><span class="op">(</span><span class="nam">init_state</span><span class="op">)</span> <span class="op">!=</span> <span class="nam">problem</span><span class="op">.</span><span class="nam">get_length</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t116" href="#t116">116</a></span><span class="t">        <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t117" href="#t117">117</a></span><span class="t">            <span class="fst">f"</span><span class="fst">init_state must have the same length as the problem. Expected length </span><span class="op">{</span><span class="nam">problem</span><span class="op">.</span><span class="nam">get_length</span><span class="op">(</span><span class="op">)</span><span class="op">}</span><span class="fst">, got </span><span class="op">{</span><span class="nam">len</span><span class="op">(</span><span class="nam">init_state</span><span class="op">)</span><span class="op">}</span><span class="fst">"</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t118" href="#t118">118</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t116" href="#t116">116</a></span><span class="t">        <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span><span class="fst">f"</span><span class="fst">init_state must have the same length as the problem. Expected </span><span class="op">{</span><span class="nam">problem</span><span class="op">.</span><span class="nam">get_length</span><span class="op">(</span><span class="op">)</span><span class="op">}</span><span class="fst">, got </span><span class="op">{</span><span class="nam">len</span><span class="op">(</span><span class="nam">init_state</span><span class="op">)</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t117" href="#t117">117</a></span><span class="t">    <span class="key">if</span> <span class="nam">callback_user_info</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span> <span class="key">and</span> <span class="key">not</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">callback_user_info</span><span class="op">,</span> <span class="nam">dict</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t118" href="#t118">118</a></span><span class="t">        <span class="key">raise</span> <span class="nam">TypeError</span><span class="op">(</span><span class="fst">f"</span><span class="fst">callback_user_info must be a dict. Got </span><span class="op">{</span><span class="nam">type</span><span class="op">(</span><span class="nam">callback_user_info</span><span class="op">)</span><span class="op">.</span><span class="nam">__name__</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t119" href="#t119">119</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t120" href="#t120">120</a></span><span class="t">    <span class="com"># Set random seed for reproducibility</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t121" href="#t121">121</a></span><span class="t">    <span class="key">if</span> <span class="nam">isinstance</span><span class="op">(</span><span class="nam">random_state</span><span class="op">,</span> <span class="nam">int</span><span class="op">)</span> <span class="key">and</span> <span class="nam">random_state</span> <span class="op">></span> <span class="num">0</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -298,7 +298,7 @@
             <a class="nav" href="z_b01ad9e90ca9d376___init___py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.1">coverage.py v7.6.1</a>,
-            created at 2024-10-04 14:55 +0000
+            created at 2024-10-04 15:58 +0000
         </p>
     </div>
 </footer>

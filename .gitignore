@@ -26,6 +26,7 @@ docs/_templates/*
 
 # Test metadata
 .coverage
+*,cover
 
 # Virtual environments
 venvp/

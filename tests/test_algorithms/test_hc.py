@@ -101,6 +101,13 @@ class TestHillClimb:
         # Assert that the callback was called
         assert len(callback_data["iterations"]) > 0
 
+    def test_hill_climb_with_curve(self):
+        """Test hill_climb function with curve=True."""
+        problem = DiscreteOpt(5, OneMax())
+        best_state, best_fitness, fitness_curve = hill_climb(problem, curve=True, random_state=SEED)
+        assert fitness_curve is not None
+        assert len(fitness_curve) > 0
+
     def test_hill_climb_callback_stop(self):
         """Test hill_climb where the callback stops the iteration."""
         problem = DiscreteOpt(5, OneMax())
@@ -119,9 +126,73 @@ class TestHillClimb:
         # Assert that the algorithm stopped at iteration 5
         assert problem.current_iteration == 5
 
-    def test_hill_climb_with_curve(self):
-        """Test hill_climb function with curve=True."""
-        problem = DiscreteOpt(5, OneMax())
-        best_state, best_fitness, fitness_curve = hill_climb(problem, curve=True, random_state=SEED)
-        assert fitness_curve is not None
-        assert len(fitness_curve) > 0
+    def test_hill_climb_can_stop(self):
+        """Test hill_climb function when can_stop is triggered."""
+
+        early_stop_iter = 2
+
+        # noinspection PyMissingOrEmptyDocstring
+        class MockProblem:
+            def __init__(self):
+                # Initialize the problem state as an 8-element array of zeros to simulate the initial state
+                self.current_iteration = 0
+                self.state = np.zeros(8)
+                self.fitness_evaluations = 0
+                self.maximize = 1
+
+            def reset(self):
+                # Reset the state to the initial configuration
+                self.state = np.zeros(8)
+
+            def set_state(self, state):
+                # Set the current state
+                self.state = state
+
+            def get_state(self):
+                # Return the current state
+                return self.state
+
+            def get_fitness(self):
+                # Return the current iteration count as the fitness to simulate improving fitness over time
+                return self.current_iteration
+
+            @staticmethod
+            def get_adjusted_fitness():
+                # Return a constant adjusted fitness value (not relevant for stopping condition in this test)
+                return 0.0
+
+            def find_neighbors(self):
+                # Simulate finding neighbors (not used in this specific test)
+                pass
+
+            def best_neighbor(self):
+                # Simulate finding the best neighbor by updating part of the state based on the current iteration
+                self.state[: self.current_iteration + 1] = 1
+                return self.state
+
+            def eval_fitness(self, state):
+                # Evaluate the fitness as the sum of the state array
+                return np.sum(state)
+
+            def get_length(self):
+                # Return the length of the state array
+                return len(self.state)
+
+            def get_maximize(self):
+                # Return whether the problem is a maximization problem
+                return self.maximize
+
+            def can_stop(self):
+                # Return `True` to trigger stopping the algorithm after 2 iterations
+                return self.current_iteration >= early_stop_iter
+
+        problem = MockProblem()
+
+        # Run the hill climbing algorithm with the mock problem, allowing up to 10 iterations
+        # Expect the algorithm to stop early due to `can_stop()` after 2 iterations
+        best_state, best_fitness, fitness_curve = hill_climb(problem=problem, max_iters=10, curve=True)
+
+        assert best_state is not None
+        assert problem.current_iteration == early_stop_iter
+        assert isinstance(best_fitness, float)
+        assert isinstance(fitness_curve, np.ndarray)

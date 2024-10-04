@@ -129,7 +129,7 @@ def hill_climb(
             user_data=callback_user_info,
         )
         if not continue_iterating:
-            return problem.get_state(), best_fitness, np.asarray(fitness_curve) if curve else None
+            return problem.get_state(), float(best_fitness), np.asarray(fitness_curve) if curve else None
 
     # Main optimization loop
     iters = 0
@@ -182,4 +182,4 @@ def hill_climb(
 
     best_fitness *= problem.get_maximize()
 
-    return best_state, best_fitness, np.asarray(fitness_curve) if curve else None
+    return best_state, float(best_fitness), np.asarray(fitness_curve) if curve else None

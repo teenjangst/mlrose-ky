@@ -99,8 +99,10 @@ def simulated_annealing(
 
     Notes
     -----
-    - The `state_fitness_callback` function is also called before the optimization loop starts (iteration 0) with the initial state and fitness values.
-    - The simulated annealing algorithm probabilistically accepts worse states as it explores the solution space, with the probability decreasing over time according to the `schedule`.
+    - The `state_fitness_callback` function is also called before the optimization loop starts (iteration 0) with the initial
+    state and fitness values.
+    - The simulated annealing algorithm probabilistically accepts worse states as it explores the solution
+    space, with the probability decreasing over time according to the `schedule`.
 
     References
     ----------
@@ -144,12 +146,11 @@ def simulated_annealing(
         )
         if not continue_iterating:
             # Early termination as per callback request
-            return (problem.get_state(), problem.get_maximize() * problem.get_fitness(), np.asarray(fitness_curve) if curve else None)
+            return problem.get_state(), problem.get_maximize() * problem.get_fitness(), np.asarray(fitness_curve) if curve else None
 
     # Main optimization loop
     attempts = 0
     iters = 0
-    continue_iterating = True
     while attempts < max_attempts and iters < max_iters:
         # Evaluate the temperature at the current iteration
         temp = schedule.evaluate(iters)

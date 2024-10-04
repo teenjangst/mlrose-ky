@@ -84,6 +84,7 @@ class TestSimulatedAnnealing:
         problem = DiscreteOpt(5, OneMax())
 
         # Define a callback function
+        # noinspection PyMissingOrEmptyDocstring
         def callback_function(iteration, attempt, done, state, fitness, fitness_evaluations, curve, user_data):
             # Record the iteration number
             user_data["iterations"].append(iteration)
@@ -109,7 +110,6 @@ class TestSimulatedAnnealing:
                     return 0.0
 
         schedule = ZeroTempSchedule()
-
         best_state, best_fitness, fitness_curve = simulated_annealing(problem, schedule=schedule, random_state=SEED, curve=True)
 
         # Since temperature becomes zero, the loop should terminate early
@@ -147,7 +147,7 @@ class TestSimulatedAnnealing:
             return True
 
         max_attempts = 3
-        user_data = {"attempts": []}
+        callback_data = {"attempts": []}
 
         # Since the initial state is already optimal, no better state will be found,
         # so attempts will increase until max_attempts is reached.
@@ -157,8 +157,38 @@ class TestSimulatedAnnealing:
             max_attempts=max_attempts,
             random_state=SEED,
             state_fitness_callback=callback_function,
-            callback_user_info=user_data,
+            callback_user_info=callback_data,
         )
 
         # Check that max_attempts was reached
-        assert max(user_data["attempts"]) == max_attempts
+        assert max(callback_data["attempts"]) == max_attempts
+
+    def test_simulated_annealing_callback_early_termination(self):
+        """Test simulated_annealing with early termination via state_fitness_callback when callback_user_info is None"""
+        problem = DiscreteOpt(5, OneMax())
+
+        # noinspection PyMissingOrEmptyDocstring
+        def callback_function(iteration, attempt, done, state, fitness, fitness_evaluations, curve, user_data):
+            return False  # Terminate immediately
+
+        best_state, best_fitness, _ = simulated_annealing(problem, random_state=SEED, state_fitness_callback=callback_function)
+
+        # Verify that the algorithm terminated immediately
+        assert problem.current_iteration == 0
+        assert isinstance(best_state, np.ndarray)
+        assert isinstance(best_fitness, float)
+
+    def test_simulated_annealing_problem_can_stop(self):
+        """Test simulated_annealing where problem.can_stop() returns True"""
+
+        class TestProblem(DiscreteOpt):
+            def can_stop(self):
+                return True
+
+        problem = TestProblem(5, OneMax())
+        best_state, best_fitness, _ = simulated_annealing(problem, random_state=SEED)
+
+        # Verify that the algorithm terminated after the first iteration
+        assert problem.current_iteration == 1
+        assert isinstance(best_state, np.ndarray)
+        assert isinstance(best_fitness, float)

@@ -63,7 +63,7 @@ class SixPeaks(_DiscretePeaksBase):
         self.t_pct: float = t_pct
 
         if not (0 <= self.t_pct <= 1):
-            raise ValueError(f"threshold_pct must be between 0 and 1, got {self.t_pct}.")
+            raise ValueError(f"threshold_pct must be between 0 and 1 (inclusive), got {self.t_pct}.")
 
     def evaluate(self, state: np.ndarray) -> float:
         """Evaluate the fitness of a state vector.

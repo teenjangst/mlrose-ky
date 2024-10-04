@@ -42,7 +42,7 @@ class ContinuousPeaks:
         self.t_pct: float = t_pct
 
         if not (0 <= self.t_pct <= 1):
-            raise ValueError(f"t_pct must be between 0 and 1, got {self.t_pct} instead.")
+            raise ValueError(f"t_pct must be between 0 and 1 (inclusive), got {self.t_pct} instead.")
 
     def evaluate(self, state: np.ndarray) -> float:
         """
@@ -58,6 +58,9 @@ class ContinuousPeaks:
         float
             Value of the fitness function.
         """
+        if not isinstance(state, np.ndarray):
+            raise TypeError(f"Expected state to be np.ndarray, got {type(state).__name__} instead.")
+
         num_elements = len(state)
         threshold = int(np.ceil(self.t_pct * num_elements))
 
@@ -116,10 +119,6 @@ class ContinuousPeaks:
 
         # If the run ends at the end of the vector, include the last index
         if is_value[-1]:
-            run_ends = np.append(run_ends, len(_x))
-
-        # Ensure that run_ends has the same length as run_starts
-        if len(run_starts) > len(run_ends):
             run_ends = np.append(run_ends, len(_x))
 
         # Calculate the lengths of the runs

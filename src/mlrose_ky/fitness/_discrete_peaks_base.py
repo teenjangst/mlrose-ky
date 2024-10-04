@@ -34,6 +34,8 @@ class _DiscretePeaksBase:
         TypeError
             If `_x` is not an instance of `np.ndarray`.
         """
+        if not isinstance(_b, int):
+            raise TypeError(f"Expected number to be an int, got {type(_b).__name__} instead.")
         if not isinstance(_x, np.ndarray):
             raise TypeError(f"Expected vector to be np.ndarray, got {type(_x).__name__} instead.")
 
@@ -62,6 +64,8 @@ class _DiscretePeaksBase:
         TypeError
             If `_x` is not an instance of `np.ndarray`.
         """
+        if not isinstance(_b, int):
+            raise TypeError(f"Expected number to be an int, got {type(_b).__name__} instead.")
         if not isinstance(_x, np.ndarray):
             raise TypeError(f"Expected vector to be np.ndarray, got {type(_x).__name__} instead.")
 

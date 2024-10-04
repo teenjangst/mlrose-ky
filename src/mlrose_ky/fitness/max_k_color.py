@@ -3,6 +3,8 @@
 # Authors: Genevieve Hayes (modified by Andrew Rollings, Kyle Nakamura)
 # License: BSD 3-clause
 
+from typing import Any
+
 import numpy as np
 
 
@@ -66,6 +68,9 @@ class MaxKColor:
         self.maximize: bool = maximize
         self.graph_edges: list[tuple[int, int]] | None = None
 
+        if not isinstance(edges, list) or not all(isinstance(edge, tuple) and len(edge) == 2 for edge in edges):
+            raise TypeError(f"Expected edges to be a list of tuples of ints.")
+
         # Remove any duplicates from list
         # noinspection PyTypeChecker
         self.edges: list[tuple[int, int]] = list({tuple(sorted(edge)) for edge in edges})
@@ -89,7 +94,7 @@ class MaxKColor:
             If `state` is not an instance of `np.ndarray`.
         """
         if not isinstance(state, np.ndarray):
-            raise TypeError(f"Expected state_vector to be np.ndarray, got {type(state).__name__} instead.")
+            raise TypeError(f"Expected state to be np.ndarray, got {type(state).__name__} instead.")
 
         edges = self.graph_edges if self.graph_edges is not None else self.edges
 
@@ -110,7 +115,7 @@ class MaxKColor:
         """
         return self.prob_type
 
-    def set_graph(self, graph):
+    def set_graph(self, graph: Any):
         """Set the graph edges from an external graph representation.
 
         Parameters

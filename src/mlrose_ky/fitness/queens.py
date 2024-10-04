@@ -39,6 +39,9 @@ class Queens:
         maximize : bool, optional, default=False
             Whether to maximize or minimize the fitness function.
         """
+        if not isinstance(maximize, bool):
+            raise TypeError(f"Expected maximize to be bool, got {type(maximize).__name__} instead.")
+
         self.prob_type: str = "discrete"
         self.maximize: bool = maximize
 
@@ -60,6 +63,7 @@ class Queens:
         np.ndarray
             Shifted array.
         """
+
         result = np.empty(a.shape)
 
         if num > 0:
@@ -72,6 +76,27 @@ class Queens:
             result[:] = a  # No shift needed
 
         return result
+
+    @staticmethod
+    def get_max_size(problem_size: int) -> int:
+        """Get the maximum possible number of conflicts for a given problem size.
+
+        Parameters
+        ----------
+        problem_size : int
+            Size of the problem (number of queens).
+
+        Returns
+        -------
+        int
+            Maximum possible number of conflicts.
+        """
+        if problem_size <= 1:
+            return 0
+        if problem_size == 2:
+            return 1
+
+        return 3 * (problem_size - 2)
 
     def evaluate(self, state: np.ndarray) -> float:
         """Evaluate the fitness of a state vector.
@@ -92,7 +117,7 @@ class Queens:
             If `state` is not an instance of `np.ndarray`.
         """
         if not isinstance(state, np.ndarray):
-            raise TypeError(f"Expected state_vector to be np.ndarray, got {type(state).__name__} instead.")
+            raise TypeError(f"Expected state to be np.ndarray, got {type(state).__name__} instead.")
 
         # Check for horizontal conflicts (queens in the same row)
         horizontal_conflicts = np.sum(np.unique(state, return_counts=True)[1] - 1)
@@ -126,25 +151,3 @@ class Queens:
             Specifies problem type as 'discrete'.
         """
         return self.prob_type
-
-    @staticmethod
-    def get_max_size(problem_size: int) -> int:
-        """Get the maximum possible number of conflicts for a given problem size.
-
-        Parameters
-        ----------
-        problem_size : int
-            Size of the problem (number of queens).
-
-        Returns
-        -------
-        int
-            Maximum possible number of conflicts.
-        """
-        if problem_size <= 1:
-            return 0
-
-        if problem_size == 2:
-            return 1
-
-        return 3 * (problem_size - 2)

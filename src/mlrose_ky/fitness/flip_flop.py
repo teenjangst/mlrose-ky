@@ -49,7 +49,7 @@ class FlipFlop:
             If `state_vector` is not an instance of `np.ndarray`.
         """
         if not isinstance(state, np.ndarray):
-            raise TypeError(f"Expected state_vector to be np.ndarray, got {type(state).__name__} instead.")
+            raise TypeError(f"Expected state to be np.ndarray, got {type(state).__name__} instead.")
 
         differences = np.diff(state) != 0
         return float(np.sum(differences))
@@ -74,7 +74,7 @@ class FlipFlop:
             If `states` is not an instance of `np.ndarray`.
         """
         if not isinstance(states, np.ndarray):
-            raise TypeError(f"Expected state_matrix to be np.ndarray, got {type(states).__name__} instead.")
+            raise TypeError(f"Expected states matrix to be np.ndarray, got {type(states).__name__} instead.")
 
         differences = np.diff(states, axis=1) != 0
         return np.array(np.sum(differences, axis=1))

@@ -50,7 +50,7 @@ class OneMax:
             If `state` is not an instance of `np.ndarray`.
         """
         if not isinstance(state, np.ndarray):
-            raise TypeError(f"Expected state_vector to be np.ndarray, got {type(state).__name__} instead.")
+            raise TypeError(f"Expected state to be np.ndarray, got {type(state).__name__} instead.")
 
         return float(np.sum(state))
 

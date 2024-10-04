@@ -56,6 +56,8 @@ class CustomFitness:
         ValueError
             If `problem_type` is not one of ['discrete', 'continuous', 'tsp', 'either'].
         """
+        if not callable(fitness_fn):
+            raise TypeError(f"Expected fitness_fn to be a callable function, got {type(fitness_fn).__name__} instead.")
         if problem_type not in ["discrete", "continuous", "tsp", "either"]:
             raise ValueError(f"Invalid problem_type: {problem_type}. Must be one of ['discrete', 'continuous', 'tsp', 'either'].")
 
@@ -82,7 +84,7 @@ class CustomFitness:
             If `state_vector` is not an instance of `np.ndarray`.
         """
         if not isinstance(state, np.ndarray):
-            raise TypeError(f"Expected state_vector to be np.ndarray, got {type(state).__name__} instead.")
+            raise TypeError(f"Expected state to be np.ndarray, got {type(state).__name__} instead.")
 
         return float(self.fitness_fn(state, **self.kwargs))
 

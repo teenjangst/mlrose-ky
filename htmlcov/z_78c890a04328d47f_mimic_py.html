@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for src/mlrose_ky/algorithms/mimic.py: 92%</title>
+    <title>Coverage for src/mlrose_ky/algorithms/mimic.py: 100%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_8e611ae1.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>src/mlrose_ky/algorithms/mimic.py</b>:
-            <span class="pc_cov">92%</span>
+            <span class="pc_cov">100%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">61 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">56<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">5<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">61<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">0<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_b21eb2483fc0aa25___init___py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.1">coverage.py v7.6.1</a>,
-            created at 2024-10-04 16:31 +0000
+            created at 2024-10-04 16:51 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -231,7 +231,7 @@
     <p class="pln"><span class="n"><a id="t149" href="#t149">149</a></span><span class="t">    <span class="com"># Initial callback invocation (iteration 0)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t150" href="#t150">150</a></span><span class="t">    <span class="key">if</span> <span class="nam">state_fitness_callback</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t151" href="#t151">151</a></span><span class="t">        <span class="key">if</span> <span class="nam">callback_user_info</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t152" href="#t152">152</a></span><span class="t">            <span class="nam">callback_user_info</span> <span class="op">=</span> <span class="op">{</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t152" href="#t152">152</a></span><span class="t">            <span class="nam">callback_user_info</span> <span class="op">=</span> <span class="op">{</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t153" href="#t153">153</a></span><span class="t">        <span class="nam">continue_iterating</span> <span class="op">=</span> <span class="nam">state_fitness_callback</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t154" href="#t154">154</a></span><span class="t">            <span class="nam">iteration</span><span class="op">=</span><span class="num">0</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t155" href="#t155">155</a></span><span class="t">            <span class="nam">attempt</span><span class="op">=</span><span class="num">0</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -244,9 +244,9 @@
     <p class="pln"><span class="n"><a id="t162" href="#t162">162</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t163" href="#t163">163</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">continue_iterating</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t164" href="#t164">164</a></span><span class="t">            <span class="com"># Early termination as per callback request</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t165" href="#t165">165</a></span><span class="t">            <span class="nam">best_state</span> <span class="op">=</span> <span class="nam">problem</span><span class="op">.</span><span class="nam">get_state</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">astype</span><span class="op">(</span><span class="nam">int</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t166" href="#t166">166</a></span><span class="t">            <span class="nam">best_fitness</span> <span class="op">=</span> <span class="nam">problem</span><span class="op">.</span><span class="nam">get_maximize</span><span class="op">(</span><span class="op">)</span> <span class="op">*</span> <span class="nam">problem</span><span class="op">.</span><span class="nam">get_fitness</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t167" href="#t167">167</a></span><span class="t">            <span class="key">return</span> <span class="nam">best_state</span><span class="op">,</span> <span class="nam">best_fitness</span><span class="op">,</span> <span class="nam">np</span><span class="op">.</span><span class="nam">asarray</span><span class="op">(</span><span class="nam">fitness_curve</span><span class="op">)</span> <span class="key">if</span> <span class="nam">curve</span> <span class="key">else</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t165" href="#t165">165</a></span><span class="t">            <span class="nam">best_state</span> <span class="op">=</span> <span class="nam">problem</span><span class="op">.</span><span class="nam">get_state</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">astype</span><span class="op">(</span><span class="nam">int</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t166" href="#t166">166</a></span><span class="t">            <span class="nam">best_fitness</span> <span class="op">=</span> <span class="nam">problem</span><span class="op">.</span><span class="nam">get_maximize</span><span class="op">(</span><span class="op">)</span> <span class="op">*</span> <span class="nam">problem</span><span class="op">.</span><span class="nam">get_fitness</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t167" href="#t167">167</a></span><span class="t">            <span class="key">return</span> <span class="nam">best_state</span><span class="op">,</span> <span class="nam">best_fitness</span><span class="op">,</span> <span class="nam">np</span><span class="op">.</span><span class="nam">asarray</span><span class="op">(</span><span class="nam">fitness_curve</span><span class="op">)</span> <span class="key">if</span> <span class="nam">curve</span> <span class="key">else</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t168" href="#t168">168</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t169" href="#t169">169</a></span><span class="t">    <span class="com"># Main optimization loop</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t170" href="#t170">170</a></span><span class="t">    <span class="nam">attempts</span> <span class="op">=</span> <span class="num">0</span>&nbsp;</span><span class="r"></span></p>
@@ -302,7 +302,7 @@
     <p class="pln"><span class="n"><a id="t220" href="#t220">220</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t221" href="#t221">221</a></span><span class="t">        <span class="com"># Check if the problem signals to stop</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t222" href="#t222">222</a></span><span class="t">        <span class="key">if</span> <span class="nam">problem</span><span class="op">.</span><span class="nam">can_stop</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t223" href="#t223">223</a></span><span class="t">            <span class="key">break</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t223" href="#t223">223</a></span><span class="t">            <span class="key">break</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t224" href="#t224">224</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t225" href="#t225">225</a></span><span class="t">    <span class="com"># Prepare the final best state and fitness</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t226" href="#t226">226</a></span><span class="t">    <span class="nam">best_state</span> <span class="op">=</span> <span class="nam">problem</span><span class="op">.</span><span class="nam">get_state</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">astype</span><span class="op">(</span><span class="nam">int</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -318,7 +318,7 @@
             <a class="nav" href="z_b21eb2483fc0aa25___init___py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.1">coverage.py v7.6.1</a>,
-            created at 2024-10-04 16:31 +0000
+            created at 2024-10-04 16:51 +0000
         </p>
     </div>
 </footer>

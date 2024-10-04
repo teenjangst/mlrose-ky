@@ -19,7 +19,7 @@
 | src/mlrose\_ky/algorithms/ga.py                               |      120 |        0 |    100% |           |
 | src/mlrose\_ky/algorithms/gd.py                               |       49 |        2 |     96% |  123, 189 |
 | src/mlrose\_ky/algorithms/hc.py                               |       51 |        0 |    100% |           |
-| src/mlrose\_ky/algorithms/mimic.py                            |       61 |        5 |     92% |152, 165-167, 223 |
+| src/mlrose\_ky/algorithms/mimic.py                            |       61 |        0 |    100% |           |
 | src/mlrose\_ky/algorithms/mutators/\_\_init\_\_.py            |        4 |        0 |    100% |           |
 | src/mlrose\_ky/algorithms/mutators/\_mutator\_base.py         |       11 |        0 |    100% |           |
 | src/mlrose\_ky/algorithms/mutators/change\_one\_mutator.py    |       14 |        0 |    100% |           |
@@ -93,7 +93,7 @@
 | src/mlrose\_ky/runners/utils.py                               |       14 |        2 |     86% |     37-38 |
 | src/mlrose\_ky/samples/\_\_init\_\_.py                        |        1 |        0 |    100% |           |
 | src/mlrose\_ky/samples/synthetic\_data.py                     |      123 |        0 |    100% |           |
-|                                                     **TOTAL** | **2969** |  **240** | **92%** |           |
+|                                                     **TOTAL** | **2969** |  **235** | **92%** |           |
 
 
 ## Setup coverage badge

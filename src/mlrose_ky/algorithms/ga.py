@@ -246,6 +246,8 @@ def genetic_alg(
         raise ValueError(f"hamming_factor must be between 0 and 1 (inclusive). Got {hamming_factor}")
     if hamming_decay_factor is not None and not 0 <= hamming_decay_factor <= 1:
         raise ValueError(f"hamming_decay_factor must be between 0 and 1 (inclusive). Got {hamming_decay_factor}")
+    if callback_user_info is not None and not isinstance(callback_user_info, dict):
+        raise TypeError(f"callback_user_info must be a dict. Got {type(callback_user_info).__name__}")
 
     # Set random seed for reproducibility
     if isinstance(random_state, int) and random_state > 0:

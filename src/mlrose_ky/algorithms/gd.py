@@ -103,6 +103,8 @@ def gradient_descent(
         raise ValueError(f"max_attempts must be a positive integer greater than 0. Got {max_attempts}")
     if not (isinstance(max_iters, int) or max_iters == np.inf) or max_iters <= 0:
         raise ValueError(f"max_iters must be a positive integer greater than 0 or np.inf. Got {max_iters}")
+    if callback_user_info is not None and not isinstance(callback_user_info, dict):
+        raise TypeError(f"callback_user_info must be a dict. Got {type(callback_user_info).__name__}")
 
     # Set random seed for reproducibility
     if isinstance(random_state, int) and random_state > 0:

@@ -63,21 +63,11 @@ class MockProblem:
 
 # noinspection PyMissingOrEmptyDocstring
 @pytest.fixture
-def iteration_counter():
-    class IterationCounter:
-        def __init__(self):
-            self.iterations = 0
-
-    return IterationCounter()
-
-
-# noinspection PyMissingOrEmptyDocstring
-@pytest.fixture
 def state_fitness_callback():
     # noinspection PyMissingOrEmptyDocstring
     def callback(iteration, state, fitness, user_data, attempt=None, max_attempts_reached=None, curve=None, **kwargs):
         if iteration > 0:
-            user_data.iterations += 1
+            user_data["iterations"] += 1
         if iteration >= 5:
             return False  # Stop iterating
         return True  # Continue iterating
@@ -87,6 +77,25 @@ def state_fitness_callback():
 
 class TestGradientDescent:
     """Unit tests for the gradient_descent function."""
+
+    def test_gradient_descent_invalid_max_attempts(self):
+        """Test that gradient_descent raises ValueError when max_attempts is not a positive integer greater than 0."""
+        problem = MockProblem()
+        with pytest.raises(ValueError, match="max_attempts must be a positive integer greater than 0"):
+            gradient_descent(problem, max_attempts=0)
+
+    def test_gradient_descent_invalid_max_iters(self):
+        """Test that gradient_descent raises ValueError when max_iters is not a positive integer greater than 0 or np.inf."""
+        problem = MockProblem()
+        with pytest.raises(ValueError, match="max_iters must be a positive integer greater than 0 or np.inf"):
+            gradient_descent(problem, max_iters=-10)
+
+    def test_gradient_descent_invalid_callback_user_info_type(self):
+        """Test that gradient_descent raises TypeError when callback_user_info is not a dict."""
+        problem = MockProblem()
+        with pytest.raises(TypeError, match="callback_user_info must be a dict. Got str"):
+            # noinspection PyTypeChecker
+            gradient_descent(problem, callback_user_info="Invalid callback data")
 
     def test_gradient_descent_basic(self):
         """Test basic functionality with default parameters."""
@@ -115,12 +124,12 @@ class TestGradientDescent:
         assert fitness_curve is not None
         assert len(fitness_curve) > 0
 
-    def test_gradient_descent_with_callback(self, iteration_counter, state_fitness_callback):
+    def test_gradient_descent_with_callback(self, state_fitness_callback):
         """Test using a state fitness callback."""
         problem = MockProblem()
-        _user_data = iteration_counter
+        _user_data = {"iterations": 0}
         gradient_descent(problem, state_fitness_callback=state_fitness_callback, callback_user_info=_user_data)
-        assert _user_data.iterations == 5
+        assert _user_data["iterations"] == 5
 
     def test_gradient_descent_when_max_attempts_set(self):
         """Test terminating when max_attempts is reached."""

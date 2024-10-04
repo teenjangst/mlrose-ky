@@ -14,6 +14,29 @@ from tests.globals import SEED
 class TestHillClimb:
     """Unit tests for hill_climb."""
 
+    def test_hill_climb_invalid_max_iters(self):
+        """Test that hill_climb raises ValueError when max_iters is invalid."""
+        problem = DiscreteOpt(5, OneMax())
+        max_iters = -1
+        with pytest.raises(ValueError, match=f"max_iters must be a positive integer or np.inf. Got {max_iters}"):
+            hill_climb(problem, max_iters=max_iters, random_state=SEED)
+
+    def test_hill_climb_invalid_init_state_length(self):
+        """Test that hill_climb raises ValueError when init_state length is invalid."""
+        problem = DiscreteOpt(5, OneMax())
+        init_state = np.zeros(4)  # Incorrect length
+        with pytest.raises(
+            ValueError, match=f"init_state must have the same length as the problem. Expected {problem.get_length()}, got {len(init_state)}"
+        ):
+            hill_climb(problem, init_state=init_state, random_state=SEED)
+
+    def test_hill_climb_invalid_callback_user_info_type(self):
+        """Test that hill_climb raises TypeError when callback_user_info is not a dict."""
+        problem = DiscreteOpt(5, OneMax())
+        with pytest.raises(TypeError, match="callback_user_info must be a dict. Got str"):
+            # noinspection PyTypeChecker
+            hill_climb(problem, callback_user_info="Invalid callback data")
+
     def test_hill_climb_discrete_max(self):
         """Test hill_climb function for a discrete maximization problem"""
         problem = DiscreteOpt(5, OneMax())
@@ -69,22 +92,6 @@ class TestHillClimb:
         assert np.array_equal(best_state, init_state)  # Since no iterations happened, the best state is the initial state
         assert best_fitness == -np.inf  # Since no iterations happened, the best fitness should remain the initial value
         assert fitness_curve is None  # Since curve is False by default
-
-    def test_hill_climb_invalid_max_iters(self):
-        """Test that hill_climb raises ValueError when max_iters is invalid."""
-        problem = DiscreteOpt(5, OneMax())
-        max_iters = -1
-        with pytest.raises(ValueError, match=f"max_iters must be a positive integer or np.inf. Got {max_iters}"):
-            hill_climb(problem, max_iters=max_iters, random_state=SEED)
-
-    def test_hill_climb_invalid_init_state_length(self):
-        """Test that hill_climb raises ValueError when init_state length is invalid."""
-        problem = DiscreteOpt(5, OneMax())
-        init_state = np.zeros(4)  # Incorrect length
-        with pytest.raises(
-            ValueError, match=f"init_state must have the same length as the problem. Expected {problem.get_length()}, got {len(init_state)}"
-        ):
-            hill_climb(problem, init_state=init_state, random_state=SEED)
 
     def test_hill_climb_with_callback(self):
         """Test hill_climb with a state_fitness_callback."""

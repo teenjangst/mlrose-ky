@@ -3,6 +3,7 @@
 # Authors: Andrew Rollings (modified by Kyle Nakamura)
 # License: BSD 3-clause
 
+import copy
 import ctypes
 import inspect
 import itertools
@@ -319,14 +320,13 @@ class _RunnerBase(ABC):
             total_args.update(self._extra_args)
 
         total_args.update(params)
-        user_info = [(k, v) for k, v in total_args.items()]
 
         self._invoke_algorithm(
             algorithm=algorithm,
             problem=self.problem,
             max_attempts=self.max_attempts,
             curve=self.generate_curves,
-            user_info=user_info,
+            callback_user_info=copy.deepcopy(total_args),
             **total_args,
         )
 
@@ -442,8 +442,8 @@ class _RunnerBase(ABC):
         problem: Any,
         max_attempts: int,
         curve: bool,
-        user_info: list[tuple[str, Any]],
-        additional_algorithm_args: dict[str, Any] = None,
+        callback_user_info: dict,
+        additional_algorithm_args: dict = None,
         **total_args: Any,
     ) -> tuple | None:
         """
@@ -459,8 +459,8 @@ class _RunnerBase(ABC):
             The maximum number of attempts allowed.
         curve : bool
             Whether to generate fitness curves.
-        user_info : list[tuple[str, Any]]
-            Additional information to log.
+        callback_user_info: dict, default: None
+            Dictionary of user-managed data passed as the `user_data` parameter of the callback function.
         additional_algorithm_args : dict[str, Any] | None, optional
             Extra algorithm arguments.
         **total_args : Any
@@ -496,7 +496,7 @@ class _RunnerBase(ABC):
             curve=curve,
             random_state=self.seed,
             state_fitness_callback=self._save_state,
-            callback_user_info=user_info,
+            callback_user_info=callback_user_info,
             **kwargs,
         )
 
@@ -546,7 +546,7 @@ class _RunnerBase(ABC):
         iteration: int,
         state: Any,
         fitness: float,
-        user_data: list[tuple[str, Any]],
+        user_data: dict,
         attempt: int = 0,
         done: bool = False,
         curve: list[tuple[float, int]] = None,
@@ -563,8 +563,8 @@ class _RunnerBase(ABC):
             The current state of the problem.
         fitness : float
             The fitness value of the current state.
-        user_data : list[tuple[str, Any]]
-            Additional data to log.
+        user_data : dict
+            Additional data to be managed by the algorithm callback function.
         attempt : int, optional
             The current attempt number.
         done : bool, optional
@@ -591,7 +591,7 @@ class _RunnerBase(ABC):
         # Update logging with current algorithm and user data
         display_data = {**self._current_logged_algorithm_args}
         if user_data:
-            display_data.update({n: v for n, v in user_data})
+            display_data.update(user_data)
             data_desc = ", ".join([f"{n}:[{get_short_name(v)}]" for n, v in display_data.items()])
             logging.debug(data_desc)
 
@@ -617,7 +617,7 @@ class _RunnerBase(ABC):
             return val.get_info__(t) if hasattr(val, "get_info__") else {}
 
         current_iteration_stats = {str(get_description(k)): self._sanitize_value(v) for k, v in self._current_logged_algorithm_args.items()}
-        current_iteration_stats.update({str(get_description(k)): self._sanitize_value(v) for k, v in user_data})
+        current_iteration_stats.update({str(get_description(k)): self._sanitize_value(v) for k, v in user_data.items()})
 
         additional_info = {
             k: self._sanitize_value(v)

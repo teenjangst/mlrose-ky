@@ -134,6 +134,8 @@ def mimic(
         raise ValueError(f"noise must be between 0 and 0.1 (inclusive). Got {noise}")
     else:
         problem.noise = noise
+    if callback_user_info is not None and not isinstance(callback_user_info, dict):
+        raise TypeError(f"callback_user_info must be a dict. Got {type(callback_user_info).__name__}")
 
     # Set random seed for reproducibility
     if isinstance(random_state, int) and random_state > 0:

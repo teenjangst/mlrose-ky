@@ -15,32 +15,11 @@ from tests.globals import SEED
 class TestMimic:
     """Unit tests for mimic."""
 
-    def test_mimic_discrete_max(self):
-        """Test mimic function for a discrete maximization problem"""
-        problem = DiscreteOpt(5, OneMax())
-        best_state, best_fitness, _ = mimic(problem, random_state=SEED)
-        x = np.ones(5)
-        assert np.array_equal(best_state, x) and best_fitness == 5
-
-    def test_mimic_discrete_min(self):
-        """Test mimic function for a discrete minimization problem"""
-        problem = DiscreteOpt(5, OneMax(), maximize=False)
-        best_state, best_fitness, _ = mimic(problem, random_state=SEED)
-        x = np.zeros(5)
-        assert np.array_equal(best_state, x) and best_fitness == 0
-
     def test_mimic_invalid_noise_value(self):
         noise = 1
         with pytest.raises(ValueError, match=re.escape(f"noise must be between 0 and 0.1 (inclusive). Got {noise}")):
             problem = DiscreteOpt(5, OneMax())
             mimic(problem, random_state=SEED, noise=noise)
-
-    def test_mimic_continuous_problem(self):
-        """Test that mimic raises ValueError when problem type is continuous."""
-        fitness = CustomFitness(lambda x: sum(x))
-        problem = ContinuousOpt(length=5, fitness_fn=fitness)
-        with pytest.raises(ValueError, match="MIMIC algorithm cannot be used for continuous optimization problems."):
-            mimic(problem, random_state=SEED)
 
     def test_mimic_invalid_pop_size(self):
         """Test that mimic raises ValueError when pop_size is invalid."""
@@ -69,3 +48,31 @@ class TestMimic:
         max_iters = -1
         with pytest.raises(ValueError, match=f"max_iters must be a positive integer greater than 0 or np.inf. Got {max_iters}"):
             mimic(problem, random_state=SEED, max_iters=max_iters)
+
+    def test_mimic_invalid_problem_type(self):
+        """Test that mimic raises ValueError when problem type is continuous."""
+        fitness = CustomFitness(lambda x: sum(x))
+        problem = ContinuousOpt(length=5, fitness_fn=fitness)
+        with pytest.raises(ValueError, match="MIMIC algorithm cannot be used for continuous optimization problems."):
+            mimic(problem, random_state=SEED)
+
+    def test_mimic_invalid_callback_user_info_type(self):
+        """Test that mimic raises TypeError when callback_user_info is not a dict."""
+        problem = DiscreteOpt(5, OneMax())
+        with pytest.raises(TypeError, match="callback_user_info must be a dict. Got str"):
+            # noinspection PyTypeChecker
+            mimic(problem, callback_user_info="Invalid callback data")
+
+    def test_mimic_discrete_max(self):
+        """Test mimic function for a discrete maximization problem"""
+        problem = DiscreteOpt(5, OneMax())
+        best_state, best_fitness, _ = mimic(problem, random_state=SEED)
+        x = np.ones(5)
+        assert np.array_equal(best_state, x) and best_fitness == 5
+
+    def test_mimic_discrete_min(self):
+        """Test mimic function for a discrete minimization problem"""
+        problem = DiscreteOpt(5, OneMax(), maximize=False)
+        best_state, best_fitness, _ = mimic(problem, random_state=SEED)
+        x = np.zeros(5)
+        assert np.array_equal(best_state, x) and best_fitness == 0

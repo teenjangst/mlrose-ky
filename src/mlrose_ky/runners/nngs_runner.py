@@ -32,6 +32,7 @@ Example usage:
 # Authors: Andrew Rollings (modified by Kyle Nakamura)
 # License: BSD 3-clause
 
+import copy
 from typing import Any, Callable, Optional
 
 import numpy as np
@@ -182,8 +183,11 @@ class NNGSRunner(_NNRunnerBase):
 
         total_args.update(params)
         total_args.pop("problem")
-        user_info = [(k, v) for k, v in total_args.items()]
 
         return self._invoke_algorithm(
-            algorithm=algorithm, curve=self.generate_curves, user_info=user_info, additional_algorithm_args=total_args, **params
+            algorithm=algorithm,
+            curve=self.generate_curves,
+            callback_user_info=copy.deepcopy(total_args),
+            additional_algorithm_args=total_args,
+            **params,
         )

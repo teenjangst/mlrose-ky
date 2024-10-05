@@ -53,9 +53,8 @@ class ContinuousOpt(_OptProb):
         if self.fitness_fn.get_prob_type() not in {"continuous", "either"}:
             raise ValueError(
                 "fitness_fn must have problem type 'continuous' or 'either'. "
-                "Define problem as DiscreteOpt or use an appropriate fitness function."
+                "Use an appropriate fitness function, or use DiscreteOpt instead."
             )
-
         if max_val <= min_val:
             raise ValueError("max_val must be greater than min_val.")
         if step <= 0:

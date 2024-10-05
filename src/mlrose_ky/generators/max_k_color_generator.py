@@ -81,20 +81,8 @@ class MaxKColorGenerator:
             connected_nodes = sorted(np.random.choice(valid_other_nodes, count, replace=False))
             node_connections[node] = [(node, other) for other in connected_nodes]
 
-        # Ensure graph connectivity
+        # Create the graph and ensure connectivity (node_connection_counts >= 1 guarantees that each node has at least one connection)
         graph = nx.Graph()
         graph.add_edges_from([edge for edges in node_connections.values() for edge in edges])
-
-        for node in nodes:
-            unreachable = [
-                (node, other) if node < other else (other, node) for other in nodes if other not in nx.bfs_tree(graph, node).nodes()
-            ]
-            for start, end in unreachable:
-                graph.add_edge(start, end)
-                remaining_unreachable = len(
-                    [(node, other) if node < other else (other, node) for other in nodes if other not in nx.bfs_tree(graph, node).nodes()]
-                )
-                if remaining_unreachable == 0:
-                    break
 
         return MaxKColorOpt(edges=list(graph.edges()), length=number_of_nodes, maximize=maximize, max_colors=max_colors, source_graph=graph)

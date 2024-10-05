@@ -71,8 +71,13 @@ class TSPGenerator:
         # Calculate distances between all pairs of cities
         distances = TSPGenerator.get_distances(coords, truncate=False)
 
-        # Create a graph with the calculated distances
+        # Create an empty graph
         graph = nx.Graph()
+
+        # Add nodes to the graph
+        graph.add_nodes_from(range(number_of_cities))
+
+        # Add edges with calculated distances
         for a, b, distance in distances:
             graph.add_edge(a, b, length=int(round(distance)))
 

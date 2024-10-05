@@ -20,7 +20,7 @@ Today, `mlrose-ky` introduces additional improvements and bug fixes on top of `m
 
 - Added documentation to every class, method, and function (i.e., descriptive docstrings, strong type-hints, and comments)
 - New documentation available here: https://nkapila6.github.io/mlrose-ky/
-- Increased test coverage from ~5% to ~90% (and still aiming for 100% coverage)
+- Increased test coverage from ~5% to ~95% (and still aiming for 100% coverage)
 - Actively being maintained
 - Fully backwards compatible with `mlrose-hiive`
 - Optimized Python code with NumPy vectorization
@@ -69,15 +69,15 @@ that have been completed or are in progress:
    top of every file summarizing its contents. This will make the codebase more understandable and easier to use for others. ✅
 
 4. **Increase Test Coverage**: Tests are being added using Pytest, with a goal of achieving 100% code coverage to ensure the robustness of
-   the codebase.
+   the codebase.  ✅
 
 5. **Resolve TODO/FIXME Comments**: A thorough search is being conducted for any TODO, FIXME, or similar comments, and their respective
-   issues are being resolved.
+   issues are being resolved.  ✅
 
 6. **Optimize Code**: Vanilla Python loops are being optimized where possible by vectorizing them with NumPy to enhance performance.
 
 7. **Improve Code Quality**: Any other sub-optimal code, bugs, or code quality issues are being addressed to ensure a high standard of
-   coding practices.
+   coding practices.  ✅
 
 8. **Clean Up Codebase**: All commented-out code is being removed to keep the codebase clean and maintainable. ✅
 
@@ -88,7 +88,7 @@ that have been completed or are in progress:
 The latest version can be installed using `pip`:
 
 ```bash
-pip install mlrose-ky
+pip install mlrose-ky --upgrade
 ```
 
 Once it is installed, simply import it like so:
@@ -194,17 +194,17 @@ BibTeX entries:
 	<tbody>
 		<tr>
             <td align="center">
-                <a href="https://github.com/hiive">
-                    <img src="https://avatars.githubusercontent.com/u/24660532?v=4" width="100;" alt="hiive"/>
-                    <br />
-                    <sub><b>hiive</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/knakamura13">
                     <img src="https://avatars.githubusercontent.com/u/20162718?v=4" width="100;" alt="knakamura13"/>
                     <br />
                     <sub><b>Kyle Nakamura</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/hiive">
+                    <img src="https://avatars.githubusercontent.com/u/24660532?v=4" width="100;" alt="hiive"/>
+                    <br />
+                    <sub><b>hiive</b></sub>
                 </a>
             </td>
             <td align="center">

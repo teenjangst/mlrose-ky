@@ -50,16 +50,14 @@ class _OptProb:
     """
 
     def __init__(self, length: int, fitness_fn: Any, maximize: bool = True):
-        if length < 0:
-            raise ValueError("length must be a positive integer.")
-        elif not isinstance(length, int):
-            if length.is_integer():
-                self.length: int = int(length)
-            else:
-                raise ValueError("length must be a positive integer.")
-        else:
-            self.length: int = length
+        if length is None or fitness_fn is None:
+            raise ValueError("Expected both length and fitness_fn to be defined.")
+        if not getattr(fitness_fn, "evaluate", None):
+            raise ValueError(f"fitness_fn must be an object with an evaluate attribute, got {type(fitness_fn).__name__} instead.")
+        if not isinstance(maximize, bool):
+            raise TypeError(f"maximize must be a bool, got {type(maximize).__name__} instead.")
 
+        self.length = length
         self.state: np.ndarray = np.array([0] * self.length)
         self.neighbors: np.ndarray = np.array([])
         self.fitness_fn: Any = fitness_fn
@@ -106,8 +104,10 @@ class _OptProb:
         float
             Value of the fitness function.
         """
+        if not isinstance(state, np.ndarray):
+            raise TypeError(f"Expected state to be np.ndarray, got {type(state).__name__} instead.")
         if len(state) != self.length:
-            raise ValueError(f"State length {len(state)} must match problem length {self.length}")
+            raise ValueError(f"State length {len(state)} must match problem length {self.length}.")
 
         fitness = self.maximize * self.fitness_fn.evaluate(state)
         self.fitness_evaluations += 1
@@ -218,6 +218,11 @@ class _OptProb:
         new_population : np.ndarray
             Numpy array containing the new population.
         """
+        if not isinstance(new_population, np.ndarray):
+            raise TypeError(f"Expected new_population to be np.ndarray, got {type(new_population).__name__} instead.")
+        if len(new_population) <= 0:
+            raise ValueError("new_population must contain at least one individual.")
+
         self.population = new_population
         self.evaluate_population_fitness()
 

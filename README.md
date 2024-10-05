@@ -76,7 +76,7 @@
 | src/mlrose\_ky/opt\_probs/\_opt\_prob.py                      |       75 |        0 |    100% |           |
 | src/mlrose\_ky/opt\_probs/continuous\_opt.py                  |       88 |        0 |    100% |           |
 | src/mlrose\_ky/opt\_probs/discrete\_opt.py                    |      186 |        0 |    100% |           |
-| src/mlrose\_ky/opt\_probs/flip\_flop\_opt.py                  |       37 |        5 |     86% |63, 66, 103-106 |
+| src/mlrose\_ky/opt\_probs/flip\_flop\_opt.py                  |       33 |        0 |    100% |           |
 | src/mlrose\_ky/opt\_probs/knapsack\_opt.py                    |       23 |        0 |    100% |           |
 | src/mlrose\_ky/opt\_probs/max\_k\_color\_opt.py               |       50 |        3 |     94% |77, 84, 109 |
 | src/mlrose\_ky/opt\_probs/queens\_opt.py                      |       25 |        2 |     92% |    61, 65 |
@@ -93,7 +93,7 @@
 | src/mlrose\_ky/runners/utils.py                               |       14 |        2 |     86% |     37-38 |
 | src/mlrose\_ky/samples/\_\_init\_\_.py                        |        1 |        0 |    100% |           |
 | src/mlrose\_ky/samples/synthetic\_data.py                     |      123 |        0 |    100% |           |
-|                                                     **TOTAL** | **2973** |  **148** | **95%** |           |
+|                                                     **TOTAL** | **2969** |  **143** | **95%** |           |
 
 
 ## Setup coverage badge

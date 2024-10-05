@@ -97,13 +97,8 @@ class FlipFlopOpt(DiscreteOpt):
         ValueError
             If pop_size is not a positive integer.
         """
-        if pop_size <= 0:
-            raise ValueError("pop_size must be a positive integer.")
-        elif not isinstance(pop_size, int):
-            if pop_size.is_integer():
-                pop_size = int(pop_size)
-            else:
-                raise ValueError("pop_size must be a positive integer.")
+        if pop_size <= 0 or not isinstance(pop_size, int):
+            raise ValueError(f"pop_size must be a positive, non-zero integer. Got {pop_size}.")
 
         # Generate random population
         population = np.random.rand(pop_size, self.length)

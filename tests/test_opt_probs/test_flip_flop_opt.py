@@ -1,15 +1,53 @@
 """Unit tests for opt_probs/test_flip_flop_opt.py"""
 
+import re
+
 # Author: Genevieve Hayes (modified by Kyle Nakamura)
 # License: BSD 3-clause
 
 import numpy as np
+import pytest
 
+from mlrose_ky import FlipFlop
 from mlrose_ky.opt_probs import FlipFlopOpt
 
 
 class TestFlipFlopOpt:
     """Tests for FlipFlopOpt class."""
+
+    def test_invalid_inputs(self):
+        """Test methods with invalid inputs"""
+        problem_size, invalid_size = 5, 3
+        problem = FlipFlopOpt(problem_size)
+        invalid_state = np.ones((invalid_size,))
+
+        with pytest.raises(ValueError, match=re.escape(f"new_state length {invalid_size} must match problem length {problem_size}")):
+            problem.set_state(invalid_state)
+
+        with pytest.raises(ValueError, match=re.escape("pop_size must be a positive, non-zero integer. Got -1.")):
+            problem.random_pop(-1)
+
+    def test_raise_value_error_when_fitness_fn_and_length_not_specified(self):
+        with pytest.raises(ValueError, match=re.escape("fitness_fn or length must be specified.")):
+            FlipFlopOpt()
+
+    def test_random_pop_edge_cases(self):
+        """Test random_pop method with edge cases"""
+        problem = FlipFlopOpt(5)
+
+        with pytest.raises(ValueError, match=re.escape("pop_size must be a positive, non-zero integer. Got 0.")):
+            problem.random_pop(0)
+
+        # Test with a large population size
+        problem.random_pop(10000)
+        pop = problem.get_population()
+        assert pop.shape == (10000, 5) and np.all((pop == 0) | (pop == 1))
+
+    def test_length_inference_from_fitness_fn(self):
+        fitness_fn = FlipFlop()
+        fitness_fn.weights = [1, 0, 1, 0, 1]
+        opt = FlipFlopOpt(fitness_fn=fitness_fn)
+        assert opt.length == len(fitness_fn.weights)
 
     def test_set_state(self):
         """Test set_state method"""
@@ -57,21 +95,6 @@ class TestFlipFlopOpt:
         pop = problem.get_population()
         assert pop.shape == (10, 5) and np.all((pop == 0) | (pop == 1))
 
-    def test_random_pop_edge_cases(self):
-        """Test random_pop method with edge cases"""
-        problem = FlipFlopOpt(5)
-        # Test with population size 0
-        try:
-            problem.random_pop(0)
-            assert False, "Expected an exception for population size 0"
-        except Exception as e:
-            assert str(e) == "pop_size must be a positive integer."
-
-        # Test with a large population size
-        problem.random_pop(10000)
-        pop = problem.get_population()
-        assert pop.shape == (10000, 5) and np.all((pop == 0) | (pop == 1))
-
     def test_set_state_boundary_conditions(self):
         """Test set_state method with boundary conditions"""
         problem = FlipFlopOpt(5)
@@ -84,24 +107,6 @@ class TestFlipFlopOpt:
         max_state = np.array([1, 1, 1, 1, 1])
         problem.set_state(max_state)
         assert np.array_equal(problem.get_state(), max_state)
-
-    def test_invalid_inputs(self):
-        """Test methods with invalid inputs"""
-        problem_size, invalid_size = 5, 3
-        problem = FlipFlopOpt(problem_size)
-        invalid_state = np.ones((invalid_size,))
-        try:
-            problem.set_state(invalid_state)
-            assert False, "Expected a ValueError exception for invalid state length"
-        except ValueError as e:
-            assert str(e) == f"new_state length {invalid_size} must match problem length {problem_size}"
-
-        # Test random_pop with negative size
-        try:
-            problem.random_pop(-1)
-            assert False, "Expected an exception for negative population size"
-        except Exception as e:
-            assert str(e) == "pop_size must be a positive integer."
 
     def test_can_stop_with_sub_optimal_state(self):
         """Test can_stop method given a sub-optimal state"""

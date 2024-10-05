@@ -47,11 +47,11 @@
 | src/mlrose\_ky/generators/flip\_flop\_generator.py            |        9 |        0 |    100% |           |
 | src/mlrose\_ky/generators/four\_peaks\_generator.py           |       12 |        0 |    100% |           |
 | src/mlrose\_ky/generators/knapsack\_generator.py              |       23 |        0 |    100% |           |
-| src/mlrose\_ky/generators/max\_k\_color\_generator.py         |       37 |        4 |     89% |     93-98 |
+| src/mlrose\_ky/generators/max\_k\_color\_generator.py         |       30 |        0 |    100% |           |
 | src/mlrose\_ky/generators/one\_max\_generator.py              |       11 |        0 |    100% |           |
 | src/mlrose\_ky/generators/queens\_generator.py                |       13 |        0 |    100% |           |
 | src/mlrose\_ky/generators/six\_peaks\_generator.py            |       12 |        0 |    100% |           |
-| src/mlrose\_ky/generators/tsp\_generator.py                   |       45 |        7 |     84% |64-69, 106 |
+| src/mlrose\_ky/generators/tsp\_generator.py                   |       46 |        0 |    100% |           |
 | src/mlrose\_ky/gridsearch/\_\_init\_\_.py                     |        1 |        0 |    100% |           |
 | src/mlrose\_ky/gridsearch/grid\_search\_mixin.py              |       33 |        4 |     88% |129-130, 138-139 |
 | src/mlrose\_ky/neural/\_\_init\_\_.py                         |        7 |        0 |    100% |           |
@@ -93,7 +93,7 @@
 | src/mlrose\_ky/runners/utils.py                               |       14 |        2 |     86% |     37-38 |
 | src/mlrose\_ky/samples/\_\_init\_\_.py                        |        1 |        0 |    100% |           |
 | src/mlrose\_ky/samples/synthetic\_data.py                     |      123 |        0 |    100% |           |
-|                                                     **TOTAL** | **2979** |  **193** | **94%** |           |
+|                                                     **TOTAL** | **2973** |  **182** | **94%** |           |
 
 
 ## Setup coverage badge

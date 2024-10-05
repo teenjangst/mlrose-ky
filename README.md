@@ -194,17 +194,17 @@ BibTeX entries:
 	<tbody>
 		<tr>
             <td align="center">
-                <a href="https://github.com/hiive">
-                    <img src="https://avatars.githubusercontent.com/u/24660532?v=4" width="100;" alt="hiive"/>
-                    <br />
-                    <sub><b>hiive</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/knakamura13">
                     <img src="https://avatars.githubusercontent.com/u/20162718?v=4" width="100;" alt="knakamura13"/>
                     <br />
                     <sub><b>Kyle Nakamura</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/hiive">
+                    <img src="https://avatars.githubusercontent.com/u/24660532?v=4" width="100;" alt="hiive"/>
+                    <br />
+                    <sub><b>hiive</b></sub>
                 </a>
             </td>
             <td align="center">

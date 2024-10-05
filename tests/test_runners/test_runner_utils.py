@@ -4,13 +4,29 @@
 # License: BSD 3-clause
 
 import os
-
 from unittest.mock import patch
+
+import pytest
 
 from mlrose_ky.runners import build_data_filename
 
 
 class TestRunnerUtils:
+
+    def test_build_data_filename_runtime_error(self):
+        with patch("os.makedirs", side_effect=OSError("Mocked error")), patch("os.path.exists", return_value=False):
+            output_directory = "test_output"
+            runner_name = "TestRunner"
+            experiment_name = "experiment"
+            df_name = "results"
+
+            with pytest.raises(RuntimeError) as exc_info:
+                build_data_filename(output_directory, runner_name, experiment_name, df_name)
+
+            # Assert the RuntimeError message contains the expected text
+            assert "Failed to create directory" in str(exc_info.value)
+            assert "Mocked error" in str(exc_info.value)
+
     def test_build_data_filename_default(self):
         with patch("os.makedirs") as mock_makedirs, patch("os.path.exists", return_value=True):
             output_directory = "test_output"

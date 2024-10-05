@@ -79,20 +79,13 @@ class DiscreteOpt(_OptProb):
 
         if self.fitness_fn.get_prob_type() == "continuous":
             raise ValueError(
-                "fitness_fn must have problem type 'discrete', 'either', or 'tsp'."
-                " Define problem as ContinuousOpt or use an appropriate fitness function."
+                "fitness_fn must have problem type 'discrete', 'either', or 'tsp'. Use an appropriate fitness function, "
+                "or use ContinuousOpt instead."
             )
-
-        if not max_val or max_val < 0:
+        if not isinstance(max_val, int) or max_val < 0:
             raise ValueError(f"max_val must be a positive integer. Got {max_val}")
-        elif not isinstance(max_val, int):
-            if max_val.is_integer():
-                self.max_val: int = int(max_val)
-            else:
-                raise ValueError(f"max_val must be a positive integer. Got {max_val}")
-        else:
-            self.max_val: int = max_val
 
+        self.max_val: int = max_val
         self.prob_type: str = "discrete"
         self.keep_sample: np.ndarray = np.array([])
         self.node_probs: np.ndarray = np.zeros([self.length, self.max_val, self.max_val])
@@ -136,8 +129,6 @@ class DiscreteOpt(_OptProb):
                     if self.noise > 0:
                         temp_probs += self.noise
                         temp_probs = np.divide(temp_probs, np.sum(temp_probs))
-                        if sum(temp_probs) != 1.0:
-                            temp_probs = np.divide(temp_probs, np.sum(temp_probs))
                     probs[i, j] = temp_probs
 
         self.node_probs = probs
@@ -389,7 +380,7 @@ class DiscreteOpt(_OptProb):
             Numpy array containing new sample.
         """
         if sample_size <= 0:
-            raise ValueError("sample_size must be a positive integer.")
+            raise ValueError(f"sample_size must be a positive integer, got {sample_size}.")
 
         new_sample = np.zeros([sample_size, self.length])
         new_sample[:, 0] = np.random.choice(self.max_val, sample_size, p=self.node_probs[0, 0])

@@ -1,6 +1,6 @@
 # mlrose-ky: Machine Learning, Randomized Optimization, and SEarch
 
-[![PyPI version](https://badge.fury.io/py/mlrose-ky.svg)](https://badge.fury.io/py/mlrose-ky)
+[![PyPI Version](https://img.shields.io/pypi/v/mlrose-ky)](https://pypi.org/project/mlrose-ky/)
 [![Coverage badge](https://img.shields.io/badge/dynamic/json?color=brightgreen&label=coverage&query=%24.message&url=https://raw.githubusercontent.com/knakamura13/mlrose-ky/refs/heads/python-coverage-comment-action-data/endpoint.json)](https://htmlpreview.github.io/?https://github.com/knakamura13/mlrose-ky/blob/python-coverage-comment-action-data/htmlcov/index.html)
 
 `mlrose-ky` is a Python package for applying some of the most common randomized optimization and search algorithms to a range of different

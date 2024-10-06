@@ -59,6 +59,10 @@ class QueensOpt(DiscreteOpt):
         # Ensure that either fitness_fn or length is provided
         if fitness_fn is None and length is None:
             raise ValueError("Either fitness_fn or length must be specified.")
+        if length is None and getattr(fitness_fn, "weights", None) is None:
+            raise AttributeError("Expected fitness_fn to have a weights attribute.")
+        if length is not None and (length <= 0 or not isinstance(length, int)):
+            raise ValueError(f"Expected length to be a non-negative int greater than 0, got {length}.")
 
         # Infer length from fitness_fn if not provided
         if length is None:

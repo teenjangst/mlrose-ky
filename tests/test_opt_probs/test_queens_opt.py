@@ -3,14 +3,27 @@
 # Author: Genevieve Hayes (modified by Kyle Nakamura)
 # License: BSD 3-clause
 
+import re
+
 import numpy as np
+import pytest
 
 import mlrose_ky
+from mlrose_ky import FlipFlop
 from mlrose_ky.opt_probs import QueensOpt
 
 
 class TestQueensOpt:
     """Tests for QueensOpt class."""
+
+    def test_queens_invalid_initialization(self):
+        """Test that QueensOpt raises errors when invalid parameters are used."""
+        with pytest.raises(ValueError, match=re.escape("Either fitness_fn or length must be specified.")):
+            _ = QueensOpt()
+        with pytest.raises(AttributeError, match=re.escape("Expected fitness_fn to have a weights attribute.")):
+            _ = QueensOpt(fitness_fn={})
+        with pytest.raises(ValueError, match=re.escape("Expected length to be a non-negative int greater than 0, got 0.")):
+            _ = QueensOpt(0)
 
     def test_initialization(self):
         """Test that the QueensOpt class is initialized correctly."""
@@ -20,6 +33,16 @@ class TestQueensOpt:
         assert queens_opt.length == length
         assert isinstance(queens_opt.fitness_fn, mlrose_ky.Queens)
         assert queens_opt.max_val == length
+        assert queens_opt.stop_fitness == 0
+
+    def test_initialization_inferred_length_from_fitness_weights(self):
+        """Test that the QueensOpt class is initialized correctly when length is inferred from weights."""
+        fitness_fn = FlipFlop()
+        fitness_fn.weights = np.ones(5).tolist()
+        queens_opt = QueensOpt(fitness_fn=fitness_fn)
+
+        assert queens_opt.length == 5
+        assert queens_opt.max_val == 5
         assert queens_opt.stop_fitness == 0
 
     def test_state_initialization(self):

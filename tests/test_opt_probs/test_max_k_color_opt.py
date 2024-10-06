@@ -1,16 +1,55 @@
 """Unit tests for opt_probs/max_k_color_opt.py"""
 
+import re
+
 # Author: Genevieve Hayes (modified by Kyle Nakamura)
 # License: BSD 3-clause
 
 import numpy as np
+import pytest
 
 import mlrose_ky
+from mlrose_ky import FlipFlop
 from mlrose_ky.opt_probs import MaxKColorOpt
 
 
 class TestMaxKColorOpt:
     """Tests for MaxKColorOpt class."""
+
+    def test_max_k_color_invalid_initialization(self):
+        """Test that MaxKColor raises errors when invalid parameters are used."""
+        with pytest.raises(ValueError, match=re.escape("Either fitness_fn or edges must be specified.")):
+            _ = MaxKColorOpt()
+        with pytest.raises(AttributeError, match=re.escape("Expected fitness_fn to have a weights attribute.")):
+            _ = MaxKColorOpt(fitness_fn={})
+        with pytest.raises(ValueError, match=re.escape("Expected length to be a non-negative int greater than 0, got 0.")):
+            _ = MaxKColorOpt(edges=[(0, 1)], length=0)
+
+    # Commented out test_initialization_inferred_length because unsure how problem should behave when !edges && fitness_fn.weights.
+    # def test_initialization_inferred_length(self):
+    #     """Test that MaxKColor is initialized correctly when length is inferred from edges or weights."""
+    #     fitness_fn = FlipFlop()
+    #     fitness_fn.weights = np.ones(5).tolist()
+    #     queens_opt = MaxKColorOpt(fitness_fn=fitness_fn)
+    #
+    #     assert queens_opt.length == 5
+    #     assert queens_opt.max_val == 5
+    #     assert queens_opt.stop_fitness == 0
+
+    def test_add_missing_nodes(self):
+        """Test that missing nodes are added to the graph when edges don't cover all nodes."""
+        edges = [(0, 1)]  # Only two nodes connected by an edge
+        length = 4  # Expecting 4 nodes in total, so nodes 2 and 3 should be added
+
+        max_k_color_opt = MaxKColorOpt(edges=edges, length=length)
+
+        # Check if all nodes up to `length` have been added
+        assert max_k_color_opt.source_graph.number_of_nodes() == length
+        assert all(node in max_k_color_opt.source_graph.nodes for node in range(length))
+
+        # Check that the edges are still correct
+        assert max_k_color_opt.source_graph.number_of_edges() == len(edges)
+        assert all(edge in max_k_color_opt.source_graph.edges for edge in edges)
 
     def test_initialization(self):
         """Test that the MaxKColorOpt class is initialized correctly."""

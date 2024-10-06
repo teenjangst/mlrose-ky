@@ -72,16 +72,20 @@ class MaxKColorOpt(DiscreteOpt):
         mutator: "ChangeOneMutator" = None,
         source_graph: nx.Graph = None,
     ):
-        # Ensure that either fitness_fn or edges are provided
         if fitness_fn is None and edges is None:
             raise ValueError("Either fitness_fn or edges must be specified.")
+        if length is None and edges is None and getattr(fitness_fn, "weights", None) is None:
+            raise AttributeError("Expected fitness_fn to have a weights attribute.")
+        if length is not None and (length <= 0 or not isinstance(length, int)):
+            raise ValueError(f"Expected length to be a non-negative int greater than 0, got {length}.")
 
         # If length is not provided, infer it from the edges or the fitness function
         if length is None:
             if fitness_fn is None:
                 length = len(edges)  # Infer from the number of edges
-            else:
-                length = len(fitness_fn.weights)  # Infer from the fitness function
+            # FIXME: Commented out else branch because unsure how problem should behave when !edges && fitness_fn.weights.
+            # else:
+            #     length = len(fitness_fn.weights)  # Infer from the fitness function
 
         self.length: int = length
 

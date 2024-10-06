@@ -1,15 +1,55 @@
 """Unit tests for opt_probs/tsp_opt.py"""
 
+import re
+
 # Author: Genevieve Hayes (modified by Kyle Nakamura)
 # License: BSD 3-clause
 
 import numpy as np
+import pytest
 
+from mlrose_ky import OneMax
 from mlrose_ky.opt_probs import TSPOpt
 
 
 class TestTSPOpt:
     """Tests for TSPOpt class."""
+
+    def test_init_no_params(self):
+        """Test __init__ when no fitness_fn, coords, or distances are provided."""
+        with pytest.raises(ValueError, match=re.escape("At least one of fitness_fn, coords, or distances must be specified.")):
+            _ = TSPOpt()
+
+    def test_init_invalid_fitness_fn(self):
+        """Test __init__ when fitness_fn does not have prob_type 'tsp'."""
+        fitness_fn = OneMax()
+        with pytest.raises(ValueError, match=re.escape("fitness_fn must have problem type 'tsp'.")):
+            _ = TSPOpt(length=5, fitness_fn=fitness_fn)
+
+    def test_sample_pop_negative(self):
+        """Test sample_pop method with negative sample_size."""
+        dists = [(0, 1, 3), (0, 2, 5), (0, 3, 1), (0, 4, 7)]
+        problem = TSPOpt(5, distances=dists)
+        with pytest.raises(ValueError, match=re.escape("sample_size must be a positive integer, got -1.")):
+            problem.sample_pop(-1)
+
+    def test_sample_pop_float_non_integer(self):
+        """Test sample_pop with sample_size as a non-integer float."""
+        dists = [(0, 1, 3), (0, 2, 5), (0, 3, 1), (0, 4, 7)]
+        problem = TSPOpt(5, distances=dists)
+        with pytest.raises(ValueError, match=re.escape("sample_size must be a positive integer, got 2.5.")):
+            # noinspection PyTypeChecker
+            problem.sample_pop(2.5)
+
+    def test_sample_pop_float_integer(self):
+        """Test sample_pop with sample_size as a float."""
+        dists = [(0, 1, 3), (0, 2, 5), (0, 3, 1), (0, 4, 7)]
+        problem = TSPOpt(5, distances=dists)
+        problem.keep_sample = np.array([[0, 1, 2, 3, 4], [4, 3, 2, 1, 0]])
+        problem.eval_node_probs()
+        with pytest.raises(ValueError, match=re.escape("sample_size must be a positive integer, got 2.0.")):
+            # noinspection PyTypeChecker
+            _ = problem.sample_pop(2.0)
 
     def test_adjust_probs_all_zero(self):
         """Test adjust_probs method when all elements in input vector sum to zero."""
@@ -107,3 +147,9 @@ class TestTSPOpt:
         sample = problem.sample_pop(100)
         row_sums = np.sum(sample, axis=1)
         assert np.shape(sample)[0] == 100 and np.shape(sample)[1] == 5 and max(row_sums) == 10 and min(row_sums) == 10
+
+    def test_init_with_distances_only(self):
+        """Test __init__ when distances are provided but coords and length are None."""
+        distances = [(0, 1, 1), (1, 2, 2), (2, 0, 3)]
+        problem = TSPOpt(distances=distances)
+        assert problem.length == 3

@@ -146,9 +146,11 @@ class TSPOpt(DiscreteOpt):
             par_value = state[par_ind]
             probs = node_probs[i, par_value]
 
-            if np.sum(probs) == 0:
-                next_node = np.random.choice(remaining)
-            else:
+            # Default to a random choice from remaining
+            next_node = np.random.choice(remaining)
+
+            # Only adjust if probabilities are non-zero
+            if not np.all(probs == 0):
                 adj_probs = self.adjust_probs(probs)
                 next_node = np.random.choice(self.length, p=adj_probs)
 
@@ -188,13 +190,8 @@ class TSPOpt(DiscreteOpt):
         new_sample : np.ndarray
             Numpy array containing the new sample.
         """
-        if sample_size <= 0:
-            raise ValueError("sample_size must be a positive integer.")
-        elif not isinstance(sample_size, int):
-            if sample_size.is_integer():
-                sample_size = int(sample_size)
-            else:
-                raise ValueError("sample_size must be a positive integer.")
+        if sample_size <= 0 or not isinstance(sample_size, int):
+            raise ValueError(f"sample_size must be a positive integer, got {sample_size}.")
 
         self.find_sample_order()
         new_sample = []

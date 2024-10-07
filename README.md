@@ -53,7 +53,7 @@
 | src/mlrose\_ky/generators/six\_peaks\_generator.py            |       12 |        0 |    100% |           |
 | src/mlrose\_ky/generators/tsp\_generator.py                   |       46 |        0 |    100% |           |
 | src/mlrose\_ky/gridsearch/\_\_init\_\_.py                     |        1 |        0 |    100% |           |
-| src/mlrose\_ky/gridsearch/grid\_search\_mixin.py              |       33 |        4 |     88% |129-130, 138-139 |
+| src/mlrose\_ky/gridsearch/grid\_search\_mixin.py              |       33 |        0 |    100% |           |
 | src/mlrose\_ky/neural/\_\_init\_\_.py                         |        7 |        0 |    100% |           |
 | src/mlrose\_ky/neural/\_nn\_base.py                           |       60 |        0 |    100% |           |
 | src/mlrose\_ky/neural/\_nn\_core.py                           |      121 |        0 |    100% |           |
@@ -93,7 +93,7 @@
 | src/mlrose\_ky/runners/utils.py                               |       14 |        0 |    100% |           |
 | src/mlrose\_ky/samples/\_\_init\_\_.py                        |        1 |        0 |    100% |           |
 | src/mlrose\_ky/samples/synthetic\_data.py                     |      123 |        0 |    100% |           |
-|                                                     **TOTAL** | **2972** |  **118** | **96%** |           |
+|                                                     **TOTAL** | **2972** |  **114** | **96%** |           |
 
 
 ## Setup coverage badge

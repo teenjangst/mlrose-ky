@@ -65,7 +65,7 @@
 | src/mlrose\_ky/neural/activation/softmax.py                   |       11 |        0 |    100% |           |
 | src/mlrose\_ky/neural/activation/tanh.py                      |       10 |        0 |    100% |           |
 | src/mlrose\_ky/neural/fitness/\_\_init\_\_.py                 |        1 |        0 |    100% |           |
-| src/mlrose\_ky/neural/fitness/network\_weights.py             |       81 |        8 |     90% |54, 66, 69, 72, 78, 81, 84, 87 |
+| src/mlrose\_ky/neural/fitness/network\_weights.py             |       81 |        0 |    100% |           |
 | src/mlrose\_ky/neural/linear\_regression.py                   |        6 |        0 |    100% |           |
 | src/mlrose\_ky/neural/logistic\_regression.py                 |        6 |        0 |    100% |           |
 | src/mlrose\_ky/neural/neural\_network.py                      |        6 |        0 |    100% |           |
@@ -93,7 +93,7 @@
 | src/mlrose\_ky/runners/utils.py                               |       14 |        0 |    100% |           |
 | src/mlrose\_ky/samples/\_\_init\_\_.py                        |        1 |        0 |    100% |           |
 | src/mlrose\_ky/samples/synthetic\_data.py                     |      123 |        0 |    100% |           |
-|                                                     **TOTAL** | **2972** |  **127** | **96%** |           |
+|                                                     **TOTAL** | **2972** |  **119** | **96%** |           |
 
 
 ## Setup coverage badge

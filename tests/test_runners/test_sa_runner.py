@@ -1,12 +1,12 @@
 """Unit tests for runners/sa_runner.py"""
 
-import pytest
 from unittest.mock import patch
 
-from tests.globals import SEED
+import pytest
 
 import mlrose_ky
-from mlrose_ky import SARunner, FlipFlopGenerator
+from mlrose_ky import SARunner, FlipFlopGenerator, GeomDecay
+from tests.globals import SEED
 
 
 class TestSARunner:
@@ -90,3 +90,12 @@ class TestSARunner:
         assert runner.seed == runner_kwargs["seed"]
         assert runner.iteration_list == runner_kwargs["iteration_list"]
         assert runner.temperature_list == runner_kwargs["temperature_list"]
+
+    def test_sa_runner_no_decay_list(self, runner_kwargs):
+        """Test SARunner initialization with list of temperatures but no decay list."""
+        # Remove decay_list from the default args dict
+        runner_kwargs.pop("decay_list")
+        assert "decay_list" not in runner_kwargs.keys()
+
+        runner = SARunner(**runner_kwargs)
+        assert runner.decay_list == [GeomDecay]

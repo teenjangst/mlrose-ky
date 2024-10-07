@@ -3,6 +3,8 @@
 # Author: Kyle Nakamura
 # License: BSD 3-clause
 
+import re
+
 import numpy as np
 import pytest
 
@@ -13,6 +15,83 @@ from tests.globals import sample_data
 
 class TestNeuralFitness:
     """Test cases for the neural.fitness module."""
+
+    def test_invalid_activation_fn(self):
+        X = np.array([]).reshape(0, 1)
+        y = np.array([[1], [0]])
+        node_list = [2, 1]
+        activation = {}
+
+        with pytest.raises(TypeError, match=f"Activation function must be callable, got {type(activation).__name__}"):
+            # noinspection PyTypeChecker
+            NetworkWeights(X, y, node_list, activation)
+
+    def test_x_empty_y_not_empty(self):
+        X = np.array([]).reshape(0, 1)
+        y = np.array([[1], [0]])
+        node_list = [2, 1]
+        activation = sigmoid
+
+        with pytest.raises(ValueError, match="X and y cannot be empty."):
+            NetworkWeights(X, y, node_list, activation)
+
+    def test_y_empty_x_not_empty(self):
+        X = np.array([[0.1], [0.3]])
+        y = np.array([]).reshape(0, 1)
+        node_list = [2, 1]
+        activation = sigmoid
+
+        with pytest.raises(ValueError, match="X and y cannot be empty"):
+            NetworkWeights(X, y, node_list, activation)
+
+    def test_x_y_mismatched_shapes(self):
+        X = np.array([[0.1], [0.3], [0.5]])
+        y = np.array([[1], [0]])  # Mismatched number of rows
+        node_list = [2, 1]
+        activation = sigmoid
+
+        with pytest.raises(ValueError, match=re.escape("The length of X (3) and y (2) must be equal.")):
+            NetworkWeights(X, y, node_list, activation)
+
+    def test_node_list_too_short(self):
+        X = np.array([[0.1], [0.3]])
+        y = np.array([[1], [0]])
+        node_list = [1]  # Only one element in node_list
+        activation = sigmoid
+
+        with pytest.raises(ValueError, match="node_list must contain at least 2 elements"):
+            NetworkWeights(X, y, node_list, activation)
+
+    def test_invalid_is_classifier(self):
+        X = np.array([[0.1], [0.3]])
+        y = np.array([[1], [0]])
+        node_list = [2, 1]
+        activation = sigmoid
+
+        with pytest.raises(ValueError, match="is_classifier must be True or False"):
+            # noinspection PyTypeChecker
+            NetworkWeights(X, y, node_list, activation, is_classifier="yes")
+
+    def test_invalid_learning_rate(self):
+        X = np.array([[0.1], [0.3]])
+        y = np.array([[1], [0]])
+        node_list = [2, 1]
+        activation = sigmoid
+
+        with pytest.raises(ValueError, match="learning_rate must be greater than 0"):
+            NetworkWeights(X, y, node_list, activation, learning_rate=0)
+
+    def test_invalid_state_length_in_evaluate(self):
+        X = np.array([[0.1], [0.3]])
+        y = np.array([[1], [0]])
+        node_list = [2, 1]
+        activation = sigmoid
+        state = np.array([0.5, 0.5, 0.5])  # Invalid length
+
+        nw = NetworkWeights(X, y, node_list, activation)
+
+        with pytest.raises(ValueError, match="state must have length"):
+            nw.evaluate(state)
 
     def test_initialization_valid(self):
         X = np.array([[0.1], [0.3]])
@@ -243,3 +322,46 @@ class TestNeuralFitness:
         update2 = np.array([[-3.17], [-4.18]])
 
         assert np.allclose(updates[0], update1, atol=0.001) and np.allclose(updates[1], update2, atol=0.001)
+
+    def test_y_1d_reshaped(self):
+        """Test that a 1D y array is reshaped correctly."""
+        X = np.array([[0.1], [0.3]])
+        y = np.array([1, 0])  # 1D array
+        node_list = [2, 1]
+        activation = sigmoid
+
+        nw = NetworkWeights(X, y, node_list, activation)
+
+        assert nw.y_true.shape == (2, 1), "y should be reshaped to 2D array with shape (2, 1)"
+
+    def test_y_wrong_num_columns(self):
+        """Test that ValueError is raised when y has incorrect number of columns."""
+        X = np.array([[0.1], [0.3]])
+        y = np.array([[1, 0], [0, 1]])  # 2 columns
+        node_list = [2, 1]  # Last element is 1, expecting y to have 1 column
+        activation = sigmoid
+
+        with pytest.raises(ValueError, match="The number of columns in y must equal 1."):
+            NetworkWeights(X, y, node_list, activation)
+
+    def test_invalid_bias(self):
+        """Test that ValueError is raised when bias is not a boolean."""
+        X = np.array([[0.1], [0.3]])
+        y = np.array([[1], [0]])
+        node_list = [2, 1]
+        activation = sigmoid
+        bias = "yes"  # Invalid type
+
+        with pytest.raises(TypeError, match=re.escape("bias must be a bool (True or False).")):
+            # noinspection PyTypeChecker
+            NetworkWeights(X, y, node_list, activation, bias=bias)
+
+    def test_initialization_invalid_shapes_specific(self):
+        """Test initialization with invalid X and y shapes."""
+        X = np.array([[0.1, 0.2], [0.3, 0.4]])  # 2 columns
+        y = np.array([[1], [0], [1]])  # 3 rows
+        node_list = [2, 1]
+        activation = sigmoid
+
+        with pytest.raises(ValueError, match=re.escape("The length of X (2) and y (3) must be equal.")):
+            NetworkWeights(X, y, node_list, activation)

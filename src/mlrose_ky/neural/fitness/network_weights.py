@@ -51,12 +51,11 @@ class NetworkWeights:
         learning_rate: float = 0.1,
     ):
         if not callable(activation):
-            raise TypeError("Activation function must be callable.")
+            raise TypeError(f"Activation function must be callable, got {type(activation).__name__}.")
         try:
             activation(np.array([0.1]), deriv=False)
         except TypeError:
             raise TypeError("Activation function must accept two arguments: 'x' and 'deriv'.")
-
         if X.size == 0 or y.size == 0:
             raise ValueError("X and y cannot be empty.")
 
@@ -67,22 +66,16 @@ class NetworkWeights:
 
         if np.shape(X)[0] != np.shape(y)[0]:
             raise ValueError(f"The length of X ({np.shape(X)[0]}) and y ({np.shape(y)[0]}) must be equal.")
-
         if len(node_list) < 2:
             raise ValueError("node_list must contain at least 2 elements.")
-
+        if not isinstance(bias, bool):
+            raise TypeError(f"bias must be a bool (True or False).")
         if np.shape(X)[1] != (node_list[0] - bias):
             raise ValueError(f"The number of columns in X must equal {node_list[0] - bias}.")
-
         if np.shape(y)[1] != node_list[-1]:
             raise ValueError(f"The number of columns in y must equal {node_list[-1]}.")
-
-        if not isinstance(bias, bool):
-            raise ValueError("bias must be True or False.")
-
         if not isinstance(is_classifier, bool):
             raise ValueError("is_classifier must be True or False.")
-
         if learning_rate <= 0:
             raise ValueError("learning_rate must be greater than 0.")
 

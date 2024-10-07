@@ -182,3 +182,47 @@ class TestGridSearchMixin:
         assert hasattr(search_results, "best_params_")
         assert hasattr(search_results, "best_score_")
         assert hasattr(search_results, "cv_results_")
+
+    def test_grid_search_score_intercept_sets_get_y_argmax_true_on_exception(self, grid_search_mixin):
+        """Test that _get_y_argmax is set to True when scorer raises an exception with multi-dimensional inputs."""
+
+        # Define a scorer that raises an exception when called with multi-dimensional y_pred and y_true
+        def faulty_scorer(y_true, y_pred, **kwargs):
+            if y_pred.ndim > 1 and y_true.ndim > 1:
+                raise ValueError("Faulty scorer cannot handle multi-dimensional inputs.")
+            return np.mean(y_true == y_pred)
+
+        grid_search_mixin._scorer_method = faulty_scorer
+        grid_search_mixin._params = inspect.signature(faulty_scorer)
+
+        y_true = np.array([[1, 0], [0, 1]])
+        y_pred = np.array([[0.8, 0.2], [0.3, 0.7]])
+
+        _ = grid_search_mixin._grid_search_score_intercept(y_pred=y_pred, y_true=y_true)
+
+        # After exception, _get_y_argmax should be set to True
+        assert grid_search_mixin._get_y_argmax is True, "_get_y_argmax should be set to True after exception."
+
+    def test_grid_search_score_intercept_calls_scorer_with_y_true_only_on_get_y_argmax(self, grid_search_mixin):
+        """Test that the scorer is called with only y_true when _get_y_argmax is True and scorer raises an exception."""
+
+        # Define a scorer that raises an exception even after argmax is applied
+        def another_faulty_scorer(y_true, y_pred=None, **kwargs):
+            if y_pred is not None:
+                raise ValueError("Faulty scorer cannot handle y_pred.")
+            return float(np.mean(y_true == y_true))  # Simple dummy implementation
+
+        grid_search_mixin._scorer_method = another_faulty_scorer
+        grid_search_mixin._params = inspect.signature(another_faulty_scorer)
+
+        # Manually set _get_y_argmax to True to simulate previous failure
+        grid_search_mixin._get_y_argmax = True
+
+        # Provide y_true and y_pred as 2D arrays
+        y_true = np.array([[1, 0], [0, 1], [1, 0], [0, 1]])  # Shape: (4, 2)
+        y_pred = np.array([[0, 1], [1, 0], [0, 1], [1, 0]])  # Shape: (4, 2)
+
+        score = grid_search_mixin._grid_search_score_intercept(y_pred=y_pred, y_true=y_true)
+
+        # The scorer should be called with only y_true, and since y_true == y_true, the score should be 1.0
+        assert score == 1.0, "Score should be calculated based only on y_true."

@@ -3,6 +3,7 @@
 [![PyPI Version](https://img.shields.io/pypi/v/mlrose-ky)](https://pypi.org/project/mlrose-ky/)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/dcb6d0168803406484009504a41ed466)](https://app.codacy.com/gh/knakamura13/mlrose-ky?utm_source=github.com&utm_medium=referral&utm_content=knakamura13/mlrose-ky&utm_campaign=Badge_Grade)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/994149f095134e27a9685e6e419961a9)](https://app.codacy.com/gh/knakamura13/mlrose-ky/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
+[![wakatime](https://wakatime.com/badge/user/3e093fe5-ba7b-427a-b7f6-22e93ae34ce8/project/7953f1b0-1775-4be1-92c7-13ee3a8dcc81.svg)](https://wakatime.com/badge/user/3e093fe5-ba7b-427a-b7f6-22e93ae34ce8/project/7953f1b0-1775-4be1-92c7-13ee3a8dcc81)
 
 `mlrose-ky` is a Python package for applying some of the most common randomized optimization and search algorithms to a range of different
 optimization problems, over both discrete- and continuous-valued parameter spaces.

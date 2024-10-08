@@ -63,36 +63,24 @@ class SKMLPRunner(_NNRunnerBase):
             self.mlp: MLPClassifier = MLPClassifier(**mlp_kwargs)
             self.state_callback = self.runner._save_state
             self.fit_started_: bool = False
-            self.user_info_: list[tuple[str, Any]] | None = None
+            self.user_info_: dict[str, Any] | None = None
             self.kwargs_: dict[str, Any] = kwargs
             self.loss_: float = 1.0
             self.state_: list | None = None
             self.curve_: list[tuple[float, int | None]] = []
 
-            # need to intercept the classifier so we can track statistics.
-            if runner.generate_curves:
-                if hasattr(self.mlp, "_update_no_improvement_count"):
-                    # noinspection PyProtectedMember
-                    self._mlp_update_no_improvement_count = self.mlp._update_no_improvement_count
-                    self.mlp._update_no_improvement_count = self._update_no_improvement_count_intercept
-                if hasattr(self.mlp, "_loss_grad_lbfgs"):
-                    # noinspection PyProtectedMember
-                    self._mlp_loss_grad_lbfgs = self.mlp._loss_grad_lbfgs
-                    self.mlp._loss_grad_lbfgs = self._loss_grad_lbfgs_intercept
+        def __getattr__(self, item):
+            """Delegate attribute access to the internal MLPClassifier instance."""
+            if "mlp" in self.__dict__ and hasattr(self.mlp, item):
+                return getattr(self.mlp, item)
+            raise AttributeError(f"'{type(self).__name__}' object has no attribute '{item}'")
 
-        def __getattr__(self, item: str, default: Any = None) -> Any:
-            """Fetch an attribute from the MLPClassifier if not found in the class instance."""
-            if "mlp" in self.__dict__ and hasattr(self.__dict__["mlp"], item):
-                return self.__dict__["mlp"].__getattr__(item, default)
-
-            return self.__dict__[item] if item in self.__dict__ else default
-
-        def __setattr__(self, item: str, value: Any):
-            """Set an attribute on the MLPClassifier if it exists, otherwise set it on the class instance."""
-            if "mlp" in self.__dict__ and hasattr(self.__dict__["mlp"], item):
-                self.__dict__["mlp"].__setattr__(item, value)
-
-            self.__dict__[item] = value
+        def __setattr__(self, item, value):
+            """Set attributes on the internal MLPClassifier if they exist; otherwise, set on self."""
+            if "mlp" in self.__dict__ and hasattr(self.mlp, item):
+                setattr(self.mlp, item, value)
+            else:
+                super().__setattr__(item, value)
 
         def get_params(self, deep: bool = True) -> dict:
             """
@@ -108,13 +96,13 @@ class SKMLPRunner(_NNRunnerBase):
             dict
                 A dictionary of parameters.
             """
-            out = super().get_params()
-            out.update(self.mlp.get_params())
+            out = super().get_params(deep=deep)
+            out.update(self.mlp.get_params(deep=deep))
 
             # Exclude any that end with an underscore
-            return {k: v for (k, v) in out.items() if not k[-1] == "_"}
+            return {k: v for (k, v) in out.items() if not k.endswith("_")}
 
-        def fit(self, x_train: np.ndarray, y_train: np.ndarray = None) -> MLPClassifier:
+        def fit(self, x_train: np.ndarray, y_train: np.ndarray = None) -> object:
             """
             Fit the model to the training data.
 
@@ -127,17 +115,19 @@ class SKMLPRunner(_NNRunnerBase):
 
             Returns
             -------
-            MLPClassifier
+            object of type MLPClassifier
                 The trained model.
             """
             self.fit_started_ = True
             self.runner._start_run_timing()
 
-            # Make initial callback
+            # Fit the model
+            result = self.mlp.fit(x_train, y_train)
+
+            # Invoke callback after fitting
             self._invoke_runner_callback()
 
-            # noinspection PyTypeChecker
-            return self.mlp.fit(x_train, y_train)
+            return result
 
         def predict(self, x_test: np.ndarray) -> np.ndarray:
             """
@@ -155,118 +145,30 @@ class SKMLPRunner(_NNRunnerBase):
             """
             return self.mlp.predict(x_test)
 
-        def _update_no_improvement_count_intercept(self, early_stopping: bool, x_val: np.ndarray, y_val: np.ndarray) -> int:
-            """
-            Intercept the '_update_no_improvement_count' method to track state.
-
-            Parameters
-            ----------
-            early_stopping : bool
-                Whether early stopping is enabled.
-            x_val : np.ndarray
-                Validation input data.
-            y_val : np.ndarray
-                Validation target data.
-
-            Returns
-            -------
-            int
-                The result of the original '_update_no_improvement_count' method.
-            """
-            ret = self._mlp_update_no_improvement_count(early_stopping, x_val, y_val)
-
-            self.state_ = self.mlp.coefs_ if hasattr(self.mlp, "coefs_") else []
-            self.loss_ = self.mlp.loss_ if hasattr(self.mlp, "loss_") else 0
-
-            if hasattr(self.mlp, "loss_curve_"):
-                self.curve_ = [(_loss_val, None) for _loss_val in self.mlp.loss_curve_]
-            else:
-                self.curve_.append((self.loss_, None))
-
-            self._invoke_runner_callback()
-
-            return ret
-
-        def _loss_grad_lbfgs_intercept(
-            self,
-            packed_coef_inter: np.ndarray,
-            x: np.ndarray,
-            y: np.ndarray,
-            activations: list,
-            deltas: list,
-            coef_grads: list,
-            intercept_grads: list,
-        ) -> tuple[float, np.ndarray | list]:
-            """
-            Intercept the '_loss_grad_lbfgs' method to track loss and state.
-
-            Parameters
-            ----------
-            packed_coef_inter : ndarray
-                A vector comprising the flattened coefficients and intercepts.
-
-            x : {array-like, sparse matrix} of shape (n_samples, n_features)
-                The input data.
-
-            y : ndarray of shape (n_samples,)
-                The target values.
-
-            activations : list, length = n_layers - 1
-                The ith element of the list holds the values of the ith layer.
-
-            deltas : list, length = n_layers - 1
-                The ith element of the list holds the difference between the
-                activations of the i + 1 layer and the backpropagated error.
-                More specifically, deltas are gradients of loss with respect to z
-                in each layer, where z = wx + b is the value of a particular layer
-                before passing through the activation function
-
-            coef_grads : list, length = n_layers - 1
-                The ith element contains the amount of change used to update the
-                coefficient parameters of the ith layer in an iteration.
-
-            intercept_grads : list, length = n_layers - 1
-                The ith element contains the amount of change used to update the
-                intercept parameters of the ith layer in an iteration.
-
-            Returns
-            -------
-            loss : float
-            grad : array-like, shape (number of nodes of all layers,)
-            """
-            f, g = self._mlp_loss_grad_lbfgs(packed_coef_inter, x, y, activations, deltas, coef_grads, intercept_grads)
-
-            self.loss_ = f
-            self.state_ = g
-            self.curve_.append((self.loss_, None))
-            self._invoke_runner_callback()
-
-            return f, g
-
         def _invoke_runner_callback(self):
             """Invoke the runner callback to save the current state of training."""
-            # noinspection PyProtectedMember
-            no_improvement_count = self.mlp._no_improvement_count if hasattr(self.mlp, "_no_improvement_count") else 0
-
-            iterations = self.mlp.n_iter_ if hasattr(self.mlp, "n_iter_") else 0
-            done = self.mlp.early_stopping and (no_improvement_count > self.mlp.n_iter_no_change) or iterations == self.mlp.max_iter
-
-            # Check for early abort
             if self.runner.has_aborted():
                 return
 
             if self.user_info_ is None:
-                self.user_info_ = [(k, self.__dict__[k]) for k in self.kwargs_.keys() if hasattr(self, k)]
-                for k, v in self.user_info_:
+                # Use get_params() to get all parameters
+                self.user_info_ = {k: v for k, v in self.get_params().items() if not k.endswith("_")}
+                for k, v in self.user_info_.items():
                     self.runner._log_current_argument(k, v)
+
+            # After fitting, update the loss curve
+            if hasattr(self.mlp, "loss_curve_"):
+                self.curve_ = [(_loss_val, 0) for _loss_val in self.mlp.loss_curve_]
+                iterations = len(self.mlp.loss_curve_)
+            else:
+                iterations = getattr(self.mlp, "n_iter_", 0)
 
             self.state_callback(
                 iteration=iterations,
-                state=self.state_,
-                fitness=self.loss_,
+                state=self.mlp.coefs_ if hasattr(self.mlp, "coefs_") else [],
+                fitness=self.mlp.loss_ if hasattr(self.mlp, "loss_") else 0,
                 user_data=self.user_info_,
-                attempt=no_improvement_count,
-                done=done,
+                done=True,
                 curve=self.curve_,
             )
 
@@ -289,7 +191,7 @@ class SKMLPRunner(_NNRunnerBase):
         generate_curves: bool = True,
         output_directory: str = None,
         replay: bool = False,
-        **kwargs: dict,
+        **kwargs: Any,
     ):
         """
         Initialize the SKMLPRunner class with training and testing data and various experiment parameters.
@@ -372,7 +274,7 @@ class SKMLPRunner(_NNRunnerBase):
         kwargs = {**default_kwargs, **kwargs}
 
         # Instantiate the _MLPClassifier with runner and kwargs
-        self.classifier = self._MLPClassifier(runner=self, **kwargs)  # Pass everything as kwargs
+        self.classifier = self._MLPClassifier(runner=self, **kwargs)
 
         self.classifier.runner = self
 
@@ -400,16 +302,18 @@ class SKMLPRunner(_NNRunnerBase):
 
             for i in range(len(activation_set)):
                 a = activation_set[i]
-                if a == act.relu:
+                if a == act.relu or a == "relu":
                     activation_set[i] = "relu"
-                elif a == act.sigmoid:
+                elif a == act.sigmoid or a == "logistic":
                     activation_set[i] = "logistic"
-                elif a == act.tanh:
+                elif a == act.tanh or a == "tanh":
                     activation_set[i] = "tanh"
-                elif a == act.identity:
+                elif a == act.identity or a == "identity":
                     activation_set[i] = "identity"
-                elif a == act.softmax:
-                    activation_set[i] = "softmax"
+                else:
+                    raise ValueError(
+                        f"MLPClassifier expects 'activation' to be a str among {'relu', 'logistic', 'tanh', 'identity'}, got {a}."
+                    )
 
             all_grid_search_parameters["activation"] = activation_set
 

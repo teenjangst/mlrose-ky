@@ -333,7 +333,7 @@ class TestRunnerBase:
         curve_stat = runner._create_curve_stat(iteration=iteration, curve_value=curve_value, curve_data=curve_data)
 
         assert curve_stat["Iteration"] == 1
-        assert curve_stat["Time"] is None
+        assert curve_stat["Time"] == 0.0
         assert curve_stat["Fitness"] == 0.95
         assert curve_stat["FEvals"] == 10
         assert curve_stat["param1"] == "value1"

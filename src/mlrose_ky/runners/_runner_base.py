@@ -536,7 +536,12 @@ class _RunnerBase(ABC):
             The fitness curve statistic as a dictionary.
         """
         curve_fitness_value, curve_feval_value = curve_value
-        curve_stat = {"Iteration": iteration, "Time": t, "Fitness": curve_fitness_value, "FEvals": curve_feval_value}
+        curve_stat = {
+            "Iteration": iteration,
+            "Time": t if t is not None else 0.0,  # Handle None time values
+            "Fitness": curve_fitness_value,
+            "FEvals": curve_feval_value,
+        }
 
         curve_stat.update(curve_data)
         if isinstance(curve_value, dict):
@@ -663,10 +668,14 @@ class _RunnerBase(ABC):
 
             curve_tuples = list(zip(range(ix_start, ix_end), curve[-curve_stats_to_save:]))
 
-            curve_stats = [
-                self._create_curve_stat(iteration=ix, curve_value=f, curve_data=current_iteration_stats, t=self._iteration_times[ix])
-                for ix, f in curve_tuples
-            ]
+            curve_stats = []
+            for ix, f in curve_tuples:
+                if ix < len(self._iteration_times):
+                    t = self._iteration_times[ix]
+                else:
+                    t = 0.0
+                curve_stat = self._create_curve_stat(iteration=ix, curve_value=f, curve_data=current_iteration_stats, t=t)
+                curve_stats.append(curve_stat)
 
             self._fitness_curves.extend(curve_stats)
 

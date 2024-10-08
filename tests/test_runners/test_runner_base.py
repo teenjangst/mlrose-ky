@@ -1,5 +1,7 @@
 """Unit tests for runners/_runner_base.py"""
 
+import copy
+
 # Authors: Kyle Nakamura
 # License: BSD 3-clause
 
@@ -10,6 +12,8 @@ from unittest.mock import patch, Mock, mock_open
 import numpy as np
 import pandas as pd
 import pytest
+
+from mlrose_ky import FlipFlopOpt
 
 # noinspection PyProtectedMember
 from mlrose_ky.runners._runner_base import _RunnerBase
@@ -409,3 +413,206 @@ class TestRunnerBase:
 
         with pytest.raises(NotImplementedError, match="Subclasses must implement run method"):
             runner.run()
+
+    def test_run_one_experiment_updates_total_args_with_extra_args(self, _test_runner_fixture):
+        """Test that _run_one_experiment updates total_args with self._extra_args."""
+        runner = _test_runner_fixture()
+        runner._extra_args = {"extra_arg1": "value1", "extra_arg2": "value2"}
+
+        algorithm = Mock()
+        total_args = {"arg1": "value_arg1"}
+
+        with patch.object(runner, "_invoke_algorithm") as mock_invoke_algorithm:
+            runner._run_one_experiment(algorithm, total_args)
+
+            # Check that total_args was updated with _extra_args
+            expected_total_args = {"arg1": "value_arg1", "extra_arg1": "value1", "extra_arg2": "value2"}
+
+            # Check that _invoke_algorithm was called with updated total_args
+            mock_invoke_algorithm.assert_called_once_with(
+                algorithm=algorithm,
+                problem=runner.problem,
+                max_attempts=runner.max_attempts,
+                curve=runner.generate_curves,
+                callback_user_info=copy.deepcopy(expected_total_args),
+                **expected_total_args,
+            )
+
+    def test_invoke_algorithm_raises_value_error_with_unexpected_extra_args(self, _test_runner_fixture):
+        """Test that _invoke_algorithm raises ValueError when _extra_args contain unexpected parameters."""
+        mock_problem = Mock()
+        runner = _test_runner_fixture(problem=mock_problem)
+        runner._extra_args = {"unexpected_param": "value"}
+
+        # Define a mock algorithm that does not accept 'unexpected_param'
+        def mock_algorithm(problem, max_attempts, curve, random_state, state_fitness_callback, callback_user_info):
+            return {"result": "success"}
+
+        # Mock dependencies
+        with (
+            patch.object(runner, "_load_pickles", return_value=False),
+            patch.object(runner, "_print_banner"),
+            patch.object(runner, "_start_run_timing"),
+            patch.object(runner.problem, "reset"),
+        ):
+            # Invoke the algorithm and expect a ValueError
+            with pytest.raises(ValueError, match="Unexpected parameter 'unexpected_param' in _extra_args."):
+                runner._invoke_algorithm(
+                    algorithm=mock_algorithm, problem=runner.problem, max_attempts=100, curve=True, callback_user_info={}
+                )
+
+    def test_dump_df_to_disk_saves_csv_and_logs_when_final_save_true(self, _test_runner_fixture):
+        """Test that _dump_df_to_disk saves CSV file and logs when final_save is True."""
+        runner = _test_runner_fixture()
+        runner._output_directory = "test_output"
+        df = pd.DataFrame({"A": [1]})
+        df_name = "test_df"
+
+        with (
+            patch.object(runner, "_dump_pickle_to_disk", return_value="test_output/test_df") as mock_dump_pickle,
+            patch.object(df, "to_csv") as mock_to_csv,
+            patch("logging.info") as mock_logging,
+        ):
+            runner._dump_df_to_disk(df, df_name=df_name, final_save=True)
+
+            # Check that _dump_pickle_to_disk was called
+            mock_dump_pickle.assert_called_once_with(object_to_pickle=df, name=df_name)
+
+            # Check that df.to_csv was called with correct filename
+            mock_to_csv.assert_called_once_with("test_output/test_df.csv")
+
+            # Check that logging.info was called
+            mock_logging.assert_called_once_with("Saved: [test_output/test_df.csv]")
+
+    def test_save_state_copies_first_fitness_to_zeroth_iteration(self, _test_runner_fixture):
+        """Test that _save_state copies first fitness to zeroth iteration when conditions are met."""
+        runner = _test_runner_fixture(iteration_list=[0, 1, 2], generate_curves=True, copy_zero_curve_fitness_from_first=True)
+        runner._setup()
+        runner._start_run_timing()
+
+        with (
+            patch.object(runner, "_sanitize_value"),
+            patch("logging.debug"),
+            patch.object(runner, "_create_curve_stat"),
+            patch.object(runner, "_create_and_save_run_data_frames"),
+        ):
+            # Mock perf_counter to return consistent time
+            with patch("time.perf_counter", side_effect=[100.0, 100.1, 100.2]):
+                # First call to _save_state with iteration=0
+                runner._save_state(iteration=0, state="state0", fitness=0.8, user_data={})
+
+                # Second call to _save_state with iteration=1
+                runner._save_state(iteration=1, state="state1", fitness=0.9, user_data={}, curve=[(0.9, 1)])
+
+                # Check that _fitness_curves[0]['Fitness'] has been updated to the first fitness value
+                assert len(runner._fitness_curves) >= 2
+                assert runner._fitness_curves[0]["Fitness"] == runner._fitness_curves[1]["Fitness"]
+                # Check that _copy_zero_curve_fitness_from_first is set to False
+                assert not runner._copy_zero_curve_fitness_from_first
+
+    def test_ctrl_c_handler(self, _test_runner_fixture):
+        with patch("os.makedirs"), patch("os.path.exists", return_value=True), patch("logging.info") as mock_logging:
+            runner = _test_runner_fixture()
+            mock_sig = signal.SIGINT
+            mock_frame = Mock()
+            runner._ctrl_c_handler(mock_sig, mock_frame)
+
+            # Check that logging.info was called with "*** ABORTING ***"
+            mock_logging.assert_any_call("*** ABORTING ***")
+            # Check that self.__sigint_params is set correctly
+            assert runner._RunnerBase__sigint_params == (mock_sig, mock_frame)
+
+            # Check that abort() was called, i.e., has_aborted() is True
+            assert runner.has_aborted()
+
+    def test_tear_down_exception_handling(self, _test_runner_fixture):
+        with patch("os.makedirs"), patch("os.path.exists", return_value=True), patch("logging.error") as mock_logging:
+            runner = _test_runner_fixture(override_ctrl_c_handler=True)
+            runner._RunnerBase__original_sigint_handler = Mock(side_effect=ValueError("Test exception"))
+
+            # Set conditions
+            runner._increment_spawn_count()  # Now spawn count is 1
+            runner.abort()
+            runner._RunnerBase__sigint_params = (signal.SIGINT, Mock())
+
+            runner._decrement_spawn_count()  # Decrement to 0
+            runner._tear_down()
+
+            # Check that logging.error was called with the exception message
+            mock_logging.assert_called()
+            assert "Problem restoring SIGINT handler: Test exception" in str(mock_logging.call_args)
+
+    def test_create_and_save_run_data_frames_saves_data_frames_when_not_empty(self, _test_runner_fixture):
+        """Test that _create_and_save_run_data_frames saves DataFrames when they are not empty."""
+        runner = _test_runner_fixture()
+        runner._output_directory = "test_output"
+        runner._raw_run_stats = [{"A": 1}]  # Make run_stats_df non-empty
+        runner._fitness_curves = [{"B": 2}]  # Make curves_df non-empty
+        extra_data_frames = {"extra_df": pd.DataFrame({"C": [3]})}
+
+        from unittest.mock import ANY
+
+        with patch.object(runner, "_dump_df_to_disk") as mock_dump_df_to_disk, patch("os.path.exists", return_value=True):
+            runner._create_and_save_run_data_frames(extra_data_frames=extra_data_frames, final_save=True)
+
+            # Check that _dump_df_to_disk was called for run_stats_df
+            mock_dump_df_to_disk.assert_any_call(ANY, df_name="run_stats_df", final_save=True)
+            # And for curves_df
+            mock_dump_df_to_disk.assert_any_call(ANY, df_name="curves_df", final_save=True)
+            # And for extra_data_frames
+            mock_dump_df_to_disk.assert_any_call(ANY, df_name="extra_df", final_save=True)
+            assert mock_dump_df_to_disk.call_count == 3
+
+    def test_tear_down_calls_original_sigint_handler(self, _test_runner_fixture):
+        with patch("os.makedirs"), patch("os.path.exists", return_value=True), patch("signal.signal") as mock_signal:
+            runner = _test_runner_fixture(override_ctrl_c_handler=True)
+            # Set conditions
+            runner._RunnerBase__original_sigint_handler = Mock()
+            runner._increment_spawn_count()  # Increase spawn count
+            runner.abort()
+            runner._RunnerBase__sigint_params = (signal.SIGINT, Mock())
+
+            runner._decrement_spawn_count()  # Now spawn count is zero
+            runner._tear_down()
+
+            # Check that signal.signal was called to restore the original handler
+            mock_signal.assert_called_with(signal.SIGINT, runner._RunnerBase__original_sigint_handler)
+            # Check that self.__original_sigint_handler was called with sig and frame
+            runner._RunnerBase__original_sigint_handler.assert_called_once_with(*runner._RunnerBase__sigint_params)
+
+    def test_invoke_algorithm_with_additional_algorithm_args(self, _test_runner_fixture):
+        """Test that _invoke_algorithm updates _current_logged_algorithm_args with additional_algorithm_args when provided."""
+        runner = _test_runner_fixture()
+        runner._output_directory = "test_output"
+        runner._extra_args = {"extra_arg1": "value1"}
+
+        # Define additional_algorithm_args to pass directly to _invoke_algorithm
+        additional_algorithm_args = {"additional_arg1": "value2"}
+
+        # Define a mock algorithm that accepts the extra parameters
+        # noinspection PyMissingOrEmptyDocstring
+        def mock_algorithm(
+            problem, max_attempts, curve, random_state, state_fitness_callback, callback_user_info, extra_arg1=None, additional_arg1=None
+        ):
+            return {"result": "success"}
+
+        with (
+            patch.object(runner, "_load_pickles", return_value=False),
+            patch.object(runner, "_print_banner"),
+            patch.object(runner, "_start_run_timing"),
+            patch.object(runner, "_create_and_save_run_data_frames"),
+            patch.object(runner, "_invoke_algorithm", wraps=runner._invoke_algorithm),  # Wrap to allow actual method execution
+        ):
+            # Call _invoke_algorithm with additional_algorithm_args
+            runner._invoke_algorithm(
+                algorithm=mock_algorithm,
+                problem=FlipFlopOpt(4),
+                max_attempts=100,
+                curve=True,
+                callback_user_info={},
+                additional_algorithm_args=additional_algorithm_args,
+            )
+
+            # Verify that _current_logged_algorithm_args includes both total_args and additional_algorithm_args
+            expected_logged_args = {"extra_arg1": "value1", "additional_arg1": "value2"}
+            assert runner._current_logged_algorithm_args == expected_logged_args

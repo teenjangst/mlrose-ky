@@ -86,14 +86,14 @@
 | src/mlrose\_ky/runners/\_runner\_base.py                      |      274 |        0 |    100% |           |
 | src/mlrose\_ky/runners/ga\_runner.py                          |       16 |        0 |    100% |           |
 | src/mlrose\_ky/runners/mimic\_runner.py                       |       22 |        0 |    100% |           |
-| src/mlrose\_ky/runners/nngs\_runner.py                        |       22 |        6 |     73% |129, 181-187 |
+| src/mlrose\_ky/runners/nngs\_runner.py                        |       23 |        0 |    100% |           |
 | src/mlrose\_ky/runners/rhc\_runner.py                         |       13 |        0 |    100% |           |
 | src/mlrose\_ky/runners/sa\_runner.py                          |       21 |        0 |    100% |           |
 | src/mlrose\_ky/runners/skmlp\_runner.py                       |      107 |       36 |     66% |133-140, 156, 176-188, 237-244, 249-263, 341, 407-412 |
 | src/mlrose\_ky/runners/utils.py                               |       14 |        0 |    100% |           |
 | src/mlrose\_ky/samples/\_\_init\_\_.py                        |        1 |        0 |    100% |           |
 | src/mlrose\_ky/samples/synthetic\_data.py                     |      123 |        0 |    100% |           |
-|                                                     **TOTAL** | **2975** |   **42** | **99%** |           |
+|                                                     **TOTAL** | **2976** |   **36** | **99%** |           |
 
 
 ## Setup coverage badge

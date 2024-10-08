@@ -45,6 +45,12 @@ jobs:
       - name: Run coverage
         run: coverage run -m pytest
 
+      - name: Save coverage to xml
+        run: coverage xml -o "$(pwd)/cobertura.xml"
+
       - name: Codacy Coverage Reporter
         uses: codacy/codacy-coverage-reporter-action@v1.3.0
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: "$(pwd)/cobertura.xml"
             

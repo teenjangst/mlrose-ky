@@ -131,19 +131,6 @@ class _RunnerBase(ABC):
         """Get a short name for the runner class."""
         return get_short_name(cls)
 
-    def dynamic_runner_name(self) -> str:
-        """Get the dynamic name of the runner, if set, otherwise return the default runner name."""
-        dynamic_runner_name = self._dynamic_short_name or self.runner_name()
-
-        if not dynamic_runner_name:
-            raise ValueError("dynamic_runner_name is None")
-
-        return dynamic_runner_name
-
-    def _set_dynamic_runner_name(self, name: str):
-        """Set a dynamic runner name."""
-        self._dynamic_short_name = name
-
     @staticmethod
     def _print_banner(text: str):
         """Print a formatted banner for logging."""
@@ -166,7 +153,15 @@ class _RunnerBase(ABC):
     @abstractmethod
     def run(self):
         """Abstract method to be implemented by subclasses."""
-        pass
+        raise NotImplementedError("Subclasses must implement run method.")
+
+    def dynamic_runner_name(self) -> str:
+        """Get the dynamic name of the runner, if set, otherwise return the default runner name."""
+        return self._dynamic_short_name or self.runner_name()
+
+    def _set_dynamic_runner_name(self, name: str):
+        """Set a dynamic runner name."""
+        self._dynamic_short_name = name
 
     def _increment_spawn_count(self):
         """Increment the spawn count for the runner (used in parallel execution)."""
@@ -474,6 +469,14 @@ class _RunnerBase(ABC):
         self._current_logged_algorithm_args.update(total_args)
         if additional_algorithm_args is not None:
             self._current_logged_algorithm_args.update(additional_algorithm_args)
+
+        # Validate _extra_args with respect to the specific algorithm class before adding them to the args dict
+        allowed_params = inspect.signature(algorithm).parameters.keys()
+        if self._extra_args:
+            for key in self._extra_args:
+                if key not in allowed_params:
+                    raise ValueError(f"Unexpected parameter '{key}' in _extra_args.")
+            self._current_logged_algorithm_args.update(self._extra_args)
 
         # If replay mode is enabled and previous results are found, load them
         if self.replay_mode() and self._load_pickles():

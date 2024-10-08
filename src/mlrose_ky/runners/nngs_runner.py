@@ -125,7 +125,7 @@ class NNGSRunner(_NNRunnerBase):
         grid_search_parameters = {**grid_search_parameters}
 
         # Hack for compatibility purposes
-        if "max_iter" in grid_search_parameters:
+        if "max_iters" in grid_search_parameters:
             grid_search_parameters["max_iter"] = grid_search_parameters.pop("max_iters")
 
         # Call the base class init
@@ -145,6 +145,9 @@ class NNGSRunner(_NNRunnerBase):
             grid_search_scorer_method=grid_search_scorer_method,
             **kwargs,
         )
+
+        # Assign kwargs to self._extra_args
+        self._extra_args = kwargs
 
         # Build the classifier
         self.classifier = NNClassifier(

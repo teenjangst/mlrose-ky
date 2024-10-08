@@ -1,8 +1,9 @@
 """Unit tests for runners/nngs_runner.py"""
 
-import pytest
+import copy
 from unittest.mock import patch
 
+import pytest
 import sklearn.metrics as skmt
 
 import mlrose_ky
@@ -59,11 +60,6 @@ class TestNNGSRunner:
         with patch("os.makedirs"), patch("os.path.exists", return_value=True):
             return NNGSRunner(**runner_kwargs)
 
-    def test_initialize_with_default_grid_search_params(self, runner):
-        """Test initialization with default grid search parameters."""
-        assert runner.grid_search_parameters["max_iters"] == [1, 2]
-        assert runner.grid_search_parameters["learning_rate"] == [0.001, 0.002]
-
     def test_nngs_runner_initialization_sets_algorithm(self, runner_kwargs):
         """Test NNGS runner initialization sets the algorithm."""
         runner = NNGSRunner(**runner_kwargs)
@@ -94,11 +90,37 @@ class TestNNGSRunner:
         """Test generate curves is set to True."""
         assert runner.generate_curves is True
 
-    def test_nngsrunner_initialization_with_additional_kwargs(self, runner_kwargs):
-        """Test NNGS runner initialization with additional kwargs."""
-        additional_kwargs = {"custom_arg": "custom_value"}
-        runner = NNGSRunner(**runner_kwargs, **additional_kwargs)
+    def test_initialize_with_default_grid_search_params(self, runner):
+        """Test initialization with default grid search parameters."""
+        assert runner.grid_search_parameters["learning_rate"] == [0.001, 0.002]
 
-        assert runner.classifier.bias == runner_kwargs["bias"]
-        assert runner.classifier.early_stopping == runner_kwargs["early_stopping"]
-        assert runner.classifier.clip_max == runner_kwargs["clip_max"]
+    def test_max_iters_replacement_in_grid_search_parameters(self, runner_kwargs):
+        """Test that 'max_iter' is replaced with 'max_iters' in grid_search_parameters."""
+        runner_kwargs["grid_search_parameters"].update({"max_iter": [1, 2, 3, 4, 5, 6]})
+        runner = NNGSRunner(**runner_kwargs)
+
+        assert runner.grid_search_parameters["max_iter"] == [1, 2]  # Ensure max_iters overrides max_iter if both are set
+
+    def test_run_one_experiment_with_extra_args(self, runner_kwargs):
+        """Test run_one_experiment_ with extra args."""
+        additional_kwargs = {"custom_param": "custom_value"}
+        runner = NNGSRunner(**runner_kwargs, **additional_kwargs)
+        total_args = {"arg1": "value1", "problem": "some_problem"}
+        params = {"param1": "value_param1"}
+        algorithm = runner.classifier.algorithm
+
+        with patch.object(runner, "_invoke_algorithm", return_value="mock_result") as mock_invoke:
+            result = runner.run_one_experiment_(algorithm=algorithm, total_args=total_args, **params)
+            mock_invoke.assert_called()
+            expected_params = {**params, **runner._extra_args}
+            expected_total_args = total_args.copy()
+            expected_total_args.update(expected_params)
+            expected_total_args.pop("problem", None)
+            mock_invoke.assert_called_with(
+                algorithm=algorithm,
+                curve=runner.generate_curves,
+                callback_user_info=copy.deepcopy(expected_total_args),
+                additional_algorithm_args=expected_total_args,
+                **expected_params,
+            )
+            assert result == "mock_result"

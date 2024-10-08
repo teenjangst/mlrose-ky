@@ -20,11 +20,10 @@ Today, `mlrose-ky` introduces additional improvements and bug fixes on top of `m
 
 - Added documentation to every class, method, and function (i.e., descriptive docstrings, strong type-hints, and comments)
 - New documentation available here: https://nkapila6.github.io/mlrose-ky/
-- Increased test coverage from ~5% to ~95% (and still aiming for 100% coverage)
+- Increased test coverage from ~5% to ~99% (and still aiming for 100% coverage)
 - Actively being maintained
 - Fully backwards compatible with `mlrose-hiive`
 - Optimized Python code with NumPy vectorization
-- Optimized algorithm implementations, including a bug fix for Random Hill Climb (TODO: *rhc.py:126*)
 
 ## Main Features
 

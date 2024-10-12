@@ -9,8 +9,9 @@ from mlrose_ky.fitness._discrete_peaks_base import _DiscretePeaksBase
 
 
 class FourPeaks(_DiscretePeaksBase):
-    """Fitness function for Four Peaks optimization problem. Evaluates the
-    fitness of an n-dimensional state vector `x`, given parameter T, as:
+    """
+    Fitness function for Four Peaks optimization problem. Evaluates the
+    fitness of an N-dimensional state vector `x`, given parameter T, as:
 
     .. math::
 
@@ -20,15 +21,19 @@ class FourPeaks(_DiscretePeaksBase):
 
     * `tail(b, x)` is the number of trailing b's in `x`;
     * `head(b, x)` is the number of leading b's in `x`;
-    * `R(x, T) = n`, if `tail(0, x) > T` and `head(1, x) > T`; and
+    * `R(x, T) = N`, if `tail(0, x) > T` and `head(1, x) > T`; and
     * `R(x, T) = 0`, otherwise.
+
+    There are two global maxima for this function. They are achieved either when there are `T + 1` leading 1's followed by all 0's, or
+    when there are `T + 1` trailing 0's preceded by all 1's. There are also two suboptimal local maxima that occur with a string of all
+    1's or all 0's. For large values of `T`, this problem becomes increasingly more difficult because the basin of attraction for the
+    inferior local maxima becomes larger.
 
     Parameters
     ----------
     t_pct : float, optional, default=0.1
-        Threshold parameter (T) for Four Peaks fitness function, expressed as
-        a percentage of the state space dimension, n (i.e.
-        `T = threshold_pct \\times n`).
+        Threshold parameter (T) for Four Peaks fitness function, expressed as a percentage of the state space dimension, N
+        (i.e. `T = threshold_pct * N`).
 
     Examples
     --------
@@ -39,9 +44,9 @@ class FourPeaks(_DiscretePeaksBase):
 
     References
     ----------
-    De Bonet, J., C. Isbell, and P. Viola (1997). MIMIC: Finding Optima by
+    De Bonet, J., Isbell, C., & Viola, P. (1997). MIMIC: Finding Optima by
     Estimating Probability Densities. In *Advances in Neural Information
-    Processing Systems* (NIPS) 9, pp. 424–430.
+    Processing Systems* (NIPS) 9, 424–430.
 
     Note
     ----

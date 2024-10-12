@@ -9,27 +9,32 @@ from mlrose_ky.fitness._discrete_peaks_base import _DiscretePeaksBase
 
 
 class SixPeaks(_DiscretePeaksBase):
-    """Fitness function for Six Peaks optimization problem. Evaluates the
-    fitness of an n-dimensional state vector `x`, given parameter T, as:
+    """
+    Fitness function for Six Peaks optimization problem. Evaluates the
+    fitness of an N-dimensional state vector `x`, given parameter T, as:
 
     .. math::
 
         Fitness(x, T) = \\max(tail(0, x), head(1, x)) + R(x, T)
 
-    where:
+    The Six Peaks problem is a slight variation on :py:class:`mlrose_ky.fitness.FourPeaks` where:
 
     * `tail(b, x)` is the number of trailing b's in `x`;
     * `head(b, x)` is the number of leading b's in `x`;
-    * `R(x, T) = n`, if (`tail(0, x) > T` and
-      `head(1, x) > T`) or (`tail(1, x) > T` and
-      `head(0, x) > T`); and
+    * `R(x, T) = N`, if (`tail(0, x) > T` and `head(1, x) > T`) or
+                        (`tail(1, x) > T` and `head(0, x) > T`); and
     * `R(x, T) = 0`, otherwise.
+
+    This function has two additional global maxima where there are `T + 1` leading 0's followed by all 1's, or when there are `T + 1`
+    trailing 1's preceded by all 0's. In this case, it is not the values of the candidates that is important, but their structure: the
+    first `T + 1` positions should take on the same value, the last `T + 1` positions should take on the same value, these two groups
+    should take on different values, and the middle positions should take on all the same value.
 
     Parameters
     ----------
     t_pct : float, optional, default=0.1
-        Threshold parameter (T) for Six Peaks fitness function, expressed as a percentage
-        of the state space dimension, n (i.e. `T = threshold_pct \\times n`).
+        Threshold parameter (T) for Six Peaks fitness function, expressed as a percentage of the state space dimension, N
+        (i.e. `T = threshold_pct * N`).
 
     Examples
     --------
@@ -95,10 +100,10 @@ class SixPeaks(_DiscretePeaksBase):
         leading_ones = self.head(1, state)
         trailing_ones = self.tail(1, state)
 
-        # Calculate max(tail(0, x), head(1, x))
+        # Calculate max(tail(0, x), head(1, x)); identical to FourPeaks
         max_score = max(trailing_zeros, leading_ones)
 
-        # Calculate R(x, T)
+        # Calculate R(x, T); slightly differs from FourPeaks
         reward = (
             vector_length
             if (trailing_zeros > threshold and leading_ones > threshold) or (trailing_ones > threshold and leading_zeros > threshold)

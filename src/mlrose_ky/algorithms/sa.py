@@ -64,7 +64,8 @@ def simulated_annealing(
         - attempt: int
           The current number of consecutive unsuccessful attempts to find a better neighbor.
         - done: bool
-          True if the algorithm is about to terminate (max attempts reached, max iterations reached, or `problem.can_stop()` returns True); False otherwise.
+          True if the algorithm is about to terminate (max attempts reached, max iterations reached, or `problem.can_stop()` returns True);
+          False otherwise.
         - state: np.ndarray
           The current state vector.
         - fitness: float
@@ -100,9 +101,9 @@ def simulated_annealing(
     Notes
     -----
     - The `state_fitness_callback` function is also called before the optimization loop starts (iteration 0) with the initial
-    state and fitness values.
+      state and fitness values.
     - The simulated annealing algorithm probabilistically accepts worse states as it explores the solution
-    space, with the probability decreasing over time according to the `schedule`.
+      space, with the probability decreasing over time according to the `schedule`.
 
     References
     ----------

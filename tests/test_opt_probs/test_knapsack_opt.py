@@ -8,7 +8,7 @@ import re
 import numpy as np
 import pytest
 
-from mlrose_ky import FlipFlop, Knapsack
+from mlrose_ky import Knapsack
 from mlrose_ky.opt_probs import KnapsackOpt
 
 

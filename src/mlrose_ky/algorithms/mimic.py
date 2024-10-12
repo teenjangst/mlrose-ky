@@ -72,7 +72,8 @@ def mimic(
         - attempt: int
           The current number of consecutive unsuccessful attempts to find a better state.
         - done: bool
-          True if the algorithm is about to terminate (max attempts reached, max iterations reached, or `problem.can_stop()` returns True); False otherwise.
+          True if the algorithm is about to terminate (max attempts reached, max iterations reached, or `problem.can_stop()` returns True);
+          False otherwise.
         - state: np.ndarray
           The current state vector.
         - fitness: float
@@ -108,7 +109,8 @@ def mimic(
     Notes
     -----
     - MIMIC cannot be used for solving continuous-state optimization problems.
-    - The `state_fitness_callback` function is also called before the optimization loop starts (iteration 0) with the initial state and fitness values.
+    - The `state_fitness_callback` function is also called before the optimization loop starts (iteration 0)
+      with the initial state and fitness values.
     - MIMIC generates new samples by building a probabilistic model of the best samples and sampling from this model.
 
     References

@@ -7,7 +7,6 @@ import pytest
 import numpy as np
 
 from mlrose_ky import Queens
-from tests.globals import SEED
 
 
 class TestQueens:

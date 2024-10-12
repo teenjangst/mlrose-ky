@@ -9,7 +9,6 @@ import numpy as np
 import pytest
 
 import mlrose_ky
-from mlrose_ky import FlipFlop
 from mlrose_ky.opt_probs import MaxKColorOpt
 
 

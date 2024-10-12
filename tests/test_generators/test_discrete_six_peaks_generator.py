@@ -5,7 +5,6 @@ import numpy as np
 
 from tests.globals import SEED
 
-import mlrose_ky
 from mlrose_ky import DiscreteOpt, SixPeaks
 from mlrose_ky.generators import SixPeaksGenerator
 

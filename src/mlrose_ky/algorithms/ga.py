@@ -86,7 +86,8 @@ def genetic_alg(
         - attempt: int
           The current number of consecutive unsuccessful attempts to find a better state.
         - done: bool
-          True if the algorithm is about to terminate (max attempts reached, max iterations reached, or `problem.can_stop()` returns True); False otherwise.
+          True if the algorithm is about to terminate (max attempts reached, max iterations reached, or `problem.can_stop()` returns True);
+          False otherwise.
         - state: np.ndarray
           The current state vector.
         - fitness: float
@@ -130,8 +131,10 @@ def genetic_alg(
 
     Notes
     -----
-    - The genetic algorithm evolves a population of candidate solutions by selecting individuals based on fitness, reproducing them with crossover and mutation, and iteratively improving the population.
-    - The `state_fitness_callback` function is also called before the optimization loop starts (iteration 0) with the initial state and fitness values.
+    - The genetic algorithm evolves a population of candidate solutions by selecting individuals based on fitness, reproducing them with
+      crossover and mutation, and iteratively improving the population.
+    - The `state_fitness_callback` function is also called before the optimization loop starts (iteration 0)
+      with the initial state and fitness values.
 
     References
     ----------

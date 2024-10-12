@@ -63,7 +63,8 @@ def random_hill_climb(
         - attempt: int
           The current number of consecutive unsuccessful attempts to find a better neighbor.
         - done: bool
-          True if the algorithm is about to terminate (max attempts reached, max iterations reached, or `problem.can_stop()` returns True); False otherwise.
+          True if the algorithm is about to terminate (max attempts reached, max iterations reached, or `problem.can_stop()` returns True);
+          False otherwise.
         - state: np.ndarray
           The current state vector.
         - fitness: float
@@ -96,13 +97,14 @@ def random_hill_climb(
 
     Notes
     -----
-    - The `state_fitness_callback` function is also called before the optimization loop starts (iteration 0) with the initial state and fitness values.
-    - The algorithm performs a total of `restarts + 1` runs, each time starting from a new random state (unless `init_state` is provided), and keeps track of the best state found across all restarts.
+    - The `state_fitness_callback` function is also called before the optimization loop starts (iteration 0)
+       with the initial state and fitness values.
+    - The algorithm performs a total of `restarts + 1` runs, each time starting from a new random state (unless `init_state` is provided),
+      and keeps track of the best state found across all restarts.
 
     References
     ----------
-    Brownlee, J (2011). *Clever Algorithms: Nature-Inspired Programming Recipes*.
-    `<http://www.cleveralgorithms.com>`_.
+    Brownlee, J (2011). *Clever Algorithms: Nature-Inspired Programming Recipes*. `<http://www.cleveralgorithms.com>`_.
     """
     if not isinstance(max_attempts, int) or max_attempts < 0:
         raise ValueError(f"max_attempts must be a positive integer. Got {max_attempts}")

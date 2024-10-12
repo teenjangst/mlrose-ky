@@ -4,7 +4,6 @@ import pytest
 
 from tests.globals import SEED
 
-import mlrose_ky
 from mlrose_ky.generators import KnapsackGenerator
 
 

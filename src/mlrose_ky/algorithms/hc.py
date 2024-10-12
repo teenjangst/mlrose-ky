@@ -86,8 +86,10 @@ def hill_climb(
 
     Notes
     -----
-    - The `state_fitness_callback` function is also called before the optimization loop starts (iteration 0) with the initial state and fitness values.
-    - The hill climbing algorithm moves to the neighbor with the highest fitness that improves upon the current state. If no neighbor improves upon the current state, the algorithm terminates.
+    - The `state_fitness_callback` function is also called before the optimization loop starts (iteration 0)
+      with the initial state and fitness values.
+    - The hill climbing algorithm moves to the neighbor with the highest fitness that improves upon the current state.
+      If no neighbor improves upon the current state, the algorithm terminates.
 
     References
     ----------

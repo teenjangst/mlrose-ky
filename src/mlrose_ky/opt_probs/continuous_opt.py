@@ -60,7 +60,7 @@ class ContinuousOpt(_OptProb):
         if step <= 0:
             raise ValueError("step size must be positive.")
         if (max_val - min_val) < step:
-            raise ValueError(f"step size must be less than (max_val - min_val).")
+            raise ValueError("step size must be less than (max_val - min_val).")
 
         self.prob_type: str = "continuous"
         self.min_val: float = min_val

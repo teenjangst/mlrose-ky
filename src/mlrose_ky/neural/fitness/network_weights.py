@@ -69,7 +69,7 @@ class NetworkWeights:
         if len(node_list) < 2:
             raise ValueError("node_list must contain at least 2 elements.")
         if not isinstance(bias, bool):
-            raise TypeError(f"bias must be a bool (True or False).")
+            raise TypeError("bias must be a bool (True or False).")
         if np.shape(X)[1] != (node_list[0] - bias):
             raise ValueError(f"The number of columns in X must equal {node_list[0] - bias}.")
         if np.shape(y)[1] != node_list[-1]:
@@ -79,27 +79,27 @@ class NetworkWeights:
         if learning_rate <= 0:
             raise ValueError("learning_rate must be greater than 0.")
 
-        self.X = X
-        self.y_true = y
-        self.node_list = node_list
-        self.activation = activation
-        self.bias = bias
-        self.is_classifier = is_classifier
-        self.learning_rate = learning_rate
+        self.X: np.ndarray = X
+        self.y_true: np.ndarray = y
+        self.node_list: list[int] = node_list
+        self.activation: Callable = activation
+        self.bias: bool = bias
+        self.is_classifier: bool = is_classifier
+        self.learning_rate: float = learning_rate
 
         if self.is_classifier:
-            self.loss = skm.log_loss
-            self.output_activation = act.sigmoid if np.shape(self.y_true)[1] == 1 else act.softmax
+            self.loss: skm.log_loss = skm.log_loss
+            self.output_activation: Callable = act.sigmoid if np.shape(self.y_true)[1] == 1 else act.softmax
         else:
-            self.loss = skm.mean_squared_error
-            self.output_activation = act.identity
+            self.loss: skm.mean_squared_error = skm.mean_squared_error
+            self.output_activation: Callable = act.identity
 
-        self.inputs_list = []
-        self.y_pred = y
-        self.weights = []
-        self.prob_type = "continuous"
+        self.inputs_list: list[np.ndarray] = []
+        self.y_pred: np.ndarray = y
+        self.weights: list[np.ndarray] = []
+        self.prob_type: str = "continuous"
 
-        self.nodes = sum(node_list[i] * node_list[i + 1] for i in range(len(node_list) - 1))
+        self.nodes: int = sum(node_list[i] * node_list[i + 1] for i in range(len(node_list) - 1))
 
     def evaluate(self, state: np.ndarray) -> float:
         """

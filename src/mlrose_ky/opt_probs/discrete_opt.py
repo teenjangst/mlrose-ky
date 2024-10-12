@@ -226,7 +226,7 @@ class DiscreteOpt(_OptProb):
 
     def find_sample_order(self) -> None:
         """Determine order in which to generate sample vector elements."""
-        sample_order = []
+        sample_order: list[int] = []
         last = [0]
         parent = self.parent_nodes
 

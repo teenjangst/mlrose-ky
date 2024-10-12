@@ -34,7 +34,7 @@ these algorithms to integer-string optimization problems, such as N-Queens and t
 problems, such as the neural network weight problem; and tour optimization problems, such as the Travelling Salesperson problem. It also has
 the flexibility to solve user-defined optimization problems.
 
-#### *Randomized Optimization Algorithms*
+### *Randomized Optimization Algorithms*
 
 - Implementations of: hill climbing, randomized hill climbing, simulated annealing, genetic algorithm, and (discrete) MIMIC;
 - Solve both maximization and minimization problems;
@@ -42,14 +42,14 @@ the flexibility to solve user-defined optimization problems.
 - Define your own simulated annealing decay schedule or use one of three pre-defined, customizable decay schedules: geometric decay,
   arithmetic decay, or exponential decay.
 
-#### *Problem Types*
+### *Problem Types*
 
 - Solve discrete-value (bit-string and integer-string), continuous-value, and tour optimization (travelling salesperson) problems;
 - Define your own fitness function for optimization or use a pre-defined function.
 - Pre-defined fitness functions exist for solving the: One Max, Flip Flop, Four Peaks, Six Peaks, Continuous Peaks, Knapsack, Travelling
   Salesperson, N-Queens, and Max-K Color optimization problems.
 
-#### *Machine Learning Weight Optimization*
+### *Machine Learning Weight Optimization*
 
 - Optimize the weights of neural networks, linear regression models, and logistic regression models using randomized hill climbing,
   simulated annealing, the genetic algorithm, or gradient descent;
@@ -114,15 +114,15 @@ the [3-Clause BSD license](https://github.com/gkhayes/mlrose/blob/master/LICENSE
 
 You can cite `mlrose-ky` in research publications and reports as follows:
 
-* Nakamura, K. (2024).
+- Nakamura, K. (2024).
   ***mlrose-ky: Machine Learning, Randomized Optimization, and SEarch package for Python***. https://github.com/knakamura13/mlrose-ky/.
   Accessed: *day month year*.
 
 Please also keep the original authors' citations:
 
-* Rollings, A. (2020).
+- Rollings, A. (2020).
   ***mlrose: Machine Learning, Randomized Optimization and SEarch package for Python, hiive extended remix***. https://github.com/hiive/mlrose. Accessed: *day month year*.
-* Hayes, G. (2019).
+- Hayes, G. (2019).
   ***mlrose: Machine Learning, Randomized Optimization and SEarch package for Python***. https://github.com/gkhayes/mlrose. Accessed: *day
   month year*.
 

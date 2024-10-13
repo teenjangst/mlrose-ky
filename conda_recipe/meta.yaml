@@ -1,9 +1,9 @@
-{ % set name = "mlrose-ky" % }
-  { % set version = "1.1.6" % }
+{% set name = "mlrose-ky" %}
+{% set version = "1.1.6" %}
 
 package:
-  name: { { name|lower } }
-  version: { { version } }
+  name: {{ name | lower }}
+  version: {{ version }}
 
 source:
   url: https://files.pythonhosted.org/packages/d9/12/db9f576553caa2df5b435a8e941ff29426c199e5aaee28b6967a97d4682a/mlrose_ky-1.1.6.tar.gz

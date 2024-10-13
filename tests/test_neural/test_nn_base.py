@@ -17,7 +17,8 @@ class TestNNBase:
 
     def test_nn_base_instantiation_raises(self):
         """Test that instantiating _NNBase raises TypeError due to abstract methods."""
-        with pytest.raises(TypeError, match="Can't instantiate abstract class _NNBase with abstract methods fit, predict"):
+        with pytest.raises(TypeError, match="Can't instantiate abstract class _NNBase without an implementation for abstract methods "
+                                            "'fit', 'predict'"):
             _NNBase()
 
     def test_nn_base_abstract_methods(self):

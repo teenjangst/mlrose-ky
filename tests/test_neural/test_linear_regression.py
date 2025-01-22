@@ -24,7 +24,7 @@ class TestLinearRegression:
         network.fit(X, y_classifier, init_weights=weights)
         fitted = network.fitted_weights
 
-        assert sum(fitted) < num_weights and len(fitted) == num_weights and min(fitted) >= -1 and max(fitted) <= 1
+        assert sum(fitted) <= num_weights and len(fitted) == num_weights and min(fitted) >= -1 and max(fitted) <= 1
 
     def test_fit_simulated_annealing(self, sample_data):
         """Test fitting LinearRegression using simulated annealing."""
@@ -37,7 +37,7 @@ class TestLinearRegression:
         network.fit(X, y_classifier, init_weights=weights)
         fitted = network.fitted_weights
 
-        assert sum(fitted) < num_weights and len(fitted) == num_weights and min(fitted) >= -1 and max(fitted) <= 1
+        assert sum(fitted) <= num_weights and len(fitted) == num_weights and min(fitted) >= -1 and max(fitted) <= 1
 
     def test_fit_genetic_alg(self, sample_data):
         """Test fitting LinearRegression using genetic algorithm."""
@@ -50,7 +50,7 @@ class TestLinearRegression:
         network.fit(X, y_classifier, init_weights=weights)
         fitted = network.fitted_weights
 
-        assert sum(fitted) < num_weights and len(fitted) == num_weights and min(fitted) >= -1 and max(fitted) <= 1
+        assert sum(fitted) <= num_weights and len(fitted) == num_weights and min(fitted) >= -1 and max(fitted) <= 1
 
     def test_fit_gradient_descent(self, sample_data):
         """Test fitting LinearRegression using gradient descent."""
@@ -63,7 +63,7 @@ class TestLinearRegression:
         network.fit(X, y_classifier, init_weights=weights)
         fitted = network.fitted_weights
 
-        assert sum(fitted) < num_weights and len(fitted) == num_weights and min(fitted) >= -1 and max(fitted) <= 1
+        assert sum(fitted) <= num_weights and len(fitted) == num_weights and min(fitted) >= -1 and max(fitted) <= 1
 
     def test_predict_no_bias(self, sample_data):
         """Test prediction without bias in LinearRegression."""

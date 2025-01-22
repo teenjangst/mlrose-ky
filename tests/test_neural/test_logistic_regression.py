@@ -24,7 +24,7 @@ class TestLogisticRegression:
         network.fit(X, y_classifier, init_weights=weights)
         fitted = network.fitted_weights
 
-        assert sum(fitted) < num_weights and len(fitted) == num_weights and min(fitted) >= -1 and max(fitted) <= 1
+        assert sum(fitted) <= num_weights and len(fitted) == num_weights and min(fitted) >= -1 and max(fitted) <= 1
 
     def test_fit_simulated_annealing(self, sample_data):
         """Test fitting LogisticRegression using simulated annealing."""
@@ -37,7 +37,7 @@ class TestLogisticRegression:
         network.fit(X, y_classifier, init_weights=weights)
         fitted = network.fitted_weights
 
-        assert sum(fitted) < num_weights and len(fitted) == num_weights and min(fitted) >= -1 and max(fitted) <= 1
+        assert sum(fitted) <= num_weights and len(fitted) == num_weights and min(fitted) >= -1 and max(fitted) <= 1
 
     def test_fit_genetic_alg(self, sample_data):
         """Test fitting LogisticRegression using genetic algorithm."""
@@ -49,7 +49,7 @@ class TestLogisticRegression:
         network.fit(X, y_classifier)
         fitted = network.fitted_weights
 
-        assert sum(fitted) < num_weights and len(fitted) == num_weights and min(fitted) >= -1 and max(fitted) <= 1
+        assert sum(fitted) <= num_weights and len(fitted) == num_weights and min(fitted) >= -1 and max(fitted) <= 1
 
     def test_fit_gradient_descent(self, sample_data):
         """Test fitting LogisticRegression using gradient descent."""

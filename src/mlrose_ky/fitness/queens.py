@@ -91,12 +91,7 @@ class Queens:
         int
             Maximum possible number of conflicts.
         """
-        if problem_size <= 1:
-            return 0
-        if problem_size == 2:
-            return 1
-
-        return 3 * (problem_size - 2)
+        return (problem_size * (problem_size - 1)) / 2
 
     def evaluate(self, state: np.ndarray) -> float:
         """Evaluate the fitness of a state vector.
@@ -120,7 +115,7 @@ class Queens:
             raise TypeError(f"Expected state to be np.ndarray, got {type(state).__name__} instead.")
 
         # Check for horizontal conflicts (queens in the same row)
-        horizontal_conflicts = np.sum(np.unique(state, return_counts=True)[1] - 1)
+        horizontal_conflicts = np.multiply(np.unique(state, return_counts=True)[1], np.unique(state, return_counts=True)[1] - 1).sum() // 2
 
         size = state.size
 

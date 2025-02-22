@@ -62,7 +62,7 @@ class TravellingSales:
         self.is_coords: bool = coords is not None
 
         # Determine which fitness calculation method to use
-        self.calculate_fitness: Callable = self.__calculate_fitness_by_coords if self.is_coords else self.__calculate_fitness_by_distance
+        self.calculate_fitness: Callable = self._calculate_fitness_by_coords if self.is_coords else self._calculate_fitness_by_distance
 
         if self.is_coords:
             # Precompute the coordinates array for faster access
@@ -89,7 +89,7 @@ class TravellingSales:
                 self.distance_matrix[u, v] = d
                 self.distance_matrix[v, u] = d
 
-    def __calculate_fitness_by_coords(self, state: np.ndarray) -> float:
+    def _calculate_fitness_by_coords(self, state: np.ndarray) -> float:
         """
         Calculate fitness based on coordinates.
 
@@ -112,7 +112,7 @@ class TravellingSales:
 
         return float(fitness)
 
-    def __calculate_fitness_by_distance(self, state: np.ndarray) -> float:
+    def _calculate_fitness_by_distance(self, state: np.ndarray) -> float:
         """
         Calculate fitness based on distances.
 

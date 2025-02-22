@@ -87,7 +87,7 @@ class TestQueensOpt:
         state = np.array([0, 0, 0, 0, 0, 0, 0, 0])
         queens_opt.set_state(state)
 
-        assert queens_opt.get_fitness() == -7
+        assert queens_opt.get_fitness() == -28
 
     def test_fitness_evaluation_optimal_state(self):
         """Test fitness evaluation for an optimal state."""

@@ -9,6 +9,12 @@
 `mlrose-ky` is a Python package for applying some of the most common randomized optimization and search algorithms to a range of different
 optimization problems, over both discrete- and continuous-valued parameter spaces.
 
+## Contribution
+Feel free to open a [PR](https://github.com/knakamura13/mlrose-ky/pulls) or [Issue](https://github.com/knakamura13/mlrose-ky/issues) in this repository for Code related issues.
+For documentation enhancements or errors, please head to the [Documentation Respository](https://github.com/nkapila6/mlrose-ky)
+
+We look forward to your contribution!
+
 ## Project Background
 
 `mlrose-ky` is a fork of the [`mlrose-hiive`](https://github.com/hiive/mlrose) repository, which itself was a fork of the

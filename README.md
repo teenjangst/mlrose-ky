@@ -348,6 +348,13 @@ BibTeX entries:
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/keerthivishal">
+                    <img src="https://avatars.githubusercontent.com/u/44377139?v=4" width="100;" alt="keerthivishal"/>
+                    <br />
+                    <sub><b>keerthivishal</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/nibelungvalesti">
                     <img src="https://avatars.githubusercontent.com/u/9278042?v=4" width="100;" alt="nibelungvalesti"/>
                     <br />
@@ -368,6 +375,8 @@ BibTeX entries:
                     <sub><b>Kira Yang</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/o-castaneda">
                     <img src="https://avatars.githubusercontent.com/u/11666635?v=4" width="100;" alt="o-castaneda"/>
@@ -375,8 +384,6 @@ BibTeX entries:
                     <sub><b>o-castaneda</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/dyodx">
                     <img src="https://avatars.githubusercontent.com/u/45729071?v=4" width="100;" alt="dyodx"/>
@@ -412,6 +419,8 @@ BibTeX entries:
                     <sub><b> Jesus Magana</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/vpipkt">
                     <img src="https://avatars.githubusercontent.com/u/7798319?v=4" width="100;" alt="vpipkt"/>
@@ -419,8 +428,6 @@ BibTeX entries:
                     <sub><b>Jason T Brown</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/brokensandals">
                     <img src="https://avatars.githubusercontent.com/u/328868?v=4" width="100;" alt="brokensandals"/>

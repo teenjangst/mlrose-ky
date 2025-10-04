@@ -23,6 +23,7 @@ def genetic_alg(
     max_iters: int | float = np.inf,
     curve: bool = False,
     random_state: int = None,
+    init_state: np.ndarray = None,
     state_fitness_callback: Callable = None,
     callback_user_info: dict = None,
     hamming_factor: float = 0.0,

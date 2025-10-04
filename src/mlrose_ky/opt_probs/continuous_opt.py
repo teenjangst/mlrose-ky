@@ -145,7 +145,7 @@ class ContinuousOpt(_OptProb):
 
         return neighbor
 
-    def random_pop(self, pop_size: int):
+    def random_pop(self, pop_size: int, init_state = None):
         """Create a population of random state vectors.
 
         Parameters
@@ -160,10 +160,16 @@ class ContinuousOpt(_OptProb):
         """
         if pop_size <= 0 or not isinstance(pop_size, int):
             raise ValueError("pop_size must be a positive integer.")
-
+        
         population = []
         pop_fitness = []
-
+        if init_state is not None:
+            state = init_state
+            fitness = self.eval_fitness(state)
+            population.append(state)
+            pop_fitness.append(fitness)
+            pop_size = pop_size -1
+            
         for _ in range(pop_size):
             state = self.random()
             fitness = self.eval_fitness(state)

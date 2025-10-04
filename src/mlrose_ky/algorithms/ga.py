@@ -173,7 +173,7 @@ def genetic_alg(
     # Initialize the optimization problem
     fitness_curve = []
     problem.reset()
-    problem.random_pop(pop_size)
+    problem.random_pop(pop_size, init_state)
 
     # Initial callback invocation (iteration 0)
     if state_fitness_callback is not None:
